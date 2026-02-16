@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.2.0 (2026-02-16)
+
+### Features
+
+- Call Edge Browser with generated html for quality check
+  ([`72e95ae`](https://github.com/lka/recipe-tools/commit/72e95ae60836259e865188da0fab402c926c999b))
+
+
 ## v0.1.3 (2026-02-16)
 
 ### Bug Fixes
