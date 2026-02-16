@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.1.3 (2026-02-16)
+
+### Bug Fixes
+
+- Let corrected recipes to be updateed
+  ([`9c2531a`](https://github.com/lka/recipe-tools/commit/9c2531abc6a4cc77e36a871ad1bb0dbb4aca6765))
+
+
 ## v0.1.2 (2026-02-16)
 
 ### Bug Fixes
