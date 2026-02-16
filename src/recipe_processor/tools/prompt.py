@@ -47,7 +47,7 @@ und folgende Felder extrahieren:
 | `tips` | "Tipp:", "Hinweis:", "Info:" |
 | `nutrition` | "Naehrwerte pro Portion:", "kcal" |
 | `source` | Kurze Quellenangabe mit Jahreszahl/Monat (oft am Seitenrand/-fuss) |
-| `category` | Kategorie fuer den Index (optional, wird sonst automatisch vorgeschlagen) |
+| `category` | Eine der folgenden Kategorien: Salate, Suppen, Vorspeisen & Snacks, Hauptgerichte, Brot & Gebaeck, Desserts & Kuchen. Keine eigenen Kategorien erfinden! Wenn leer, wird automatisch vorgeschlagen. |
 
 **OCR-Korrektur** – Haeufige Fehlerkennungen beachten:
 - `0` ↔ `O`, `rn` ↔ `m`, `l` ↔ `I` ↔ `1`, `ii` ↔ `ü`
