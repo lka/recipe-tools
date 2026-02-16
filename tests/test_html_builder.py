@@ -18,35 +18,34 @@ from recipe_processor.tools.html_builder import (
     build_recipe_html,
 )
 
-
 # -- _sanitize_filename --
 
 
 class TestSanitizeFilename:
 
     def test_umlaute(self):
-        assert _sanitize_filename('Käsekuchen') == 'kaesekuchen'
+        assert _sanitize_filename("Käsekuchen") == "kaesekuchen"
 
     def test_sz(self):
-        assert _sanitize_filename('Süßkartoffel') == 'suesskartoffel'
+        assert _sanitize_filename("Süßkartoffel") == "suesskartoffel"
 
     def test_spaces_to_hyphens(self):
-        assert _sanitize_filename('Rote Beete Salat') == 'rote-beete-salat'
+        assert _sanitize_filename("Rote Beete Salat") == "rote-beete-salat"
 
     def test_special_chars_removed(self):
-        result = _sanitize_filename('Crème brûlée (vegan!)')
-        assert '(' not in result
-        assert '!' not in result
+        result = _sanitize_filename("Crème brûlée (vegan!)")
+        assert "(" not in result
+        assert "!" not in result
 
     def test_max_length(self):
-        long_name = 'A' * 100
+        long_name = "A" * 100
         assert len(_sanitize_filename(long_name)) <= 50
 
     def test_custom_max_length(self):
-        assert len(_sanitize_filename('Langer Name', max_length=5)) <= 5
+        assert len(_sanitize_filename("Langer Name", max_length=5)) <= 5
 
     def test_multiple_spaces(self):
-        assert _sanitize_filename('Apfel   Kuchen') == 'apfel-kuchen'
+        assert _sanitize_filename("Apfel   Kuchen") == "apfel-kuchen"
 
 
 # -- _parse_iso_duration --
@@ -55,25 +54,25 @@ class TestSanitizeFilename:
 class TestParseIsoDuration:
 
     def test_minutes(self):
-        assert _parse_iso_duration('30 Min') == 'PT30M'
+        assert _parse_iso_duration("30 Min") == "PT30M"
 
     def test_hours_and_minutes(self):
-        assert _parse_iso_duration('1 Std 15 Min') == 'PT1H15M'
+        assert _parse_iso_duration("1 Std 15 Min") == "PT1H15M"
 
     def test_hours_only(self):
-        assert _parse_iso_duration('2 Stunden') == 'PT2H'
+        assert _parse_iso_duration("2 Stunden") == "PT2H"
 
     def test_bare_number(self):
-        assert _parse_iso_duration('45') == 'PT45M'
+        assert _parse_iso_duration("45") == "PT45M"
 
     def test_empty(self):
-        assert _parse_iso_duration('') == ''
+        assert _parse_iso_duration("") == ""
 
     def test_none_like(self):
-        assert _parse_iso_duration('keine Angabe') == ''
+        assert _parse_iso_duration("keine Angabe") == ""
 
     def test_minute_singular(self):
-        assert _parse_iso_duration('1 Minute') == 'PT1M'
+        assert _parse_iso_duration("1 Minute") == "PT1M"
 
 
 # -- _fix_quantity_spacing --
@@ -82,22 +81,22 @@ class TestParseIsoDuration:
 class TestFixQuantitySpacing:
 
     def test_grams(self):
-        assert _fix_quantity_spacing('250g Mehl') == '250 g Mehl'
+        assert _fix_quantity_spacing("250g Mehl") == "250 g Mehl"
 
     def test_already_spaced(self):
-        assert _fix_quantity_spacing('250 g Mehl') == '250 g Mehl'
+        assert _fix_quantity_spacing("250 g Mehl") == "250 g Mehl"
 
     def test_milliliter(self):
-        assert _fix_quantity_spacing('100ml Milch') == '100 ml Milch'
+        assert _fix_quantity_spacing("100ml Milch") == "100 ml Milch"
 
     def test_tablespoon(self):
-        assert _fix_quantity_spacing('2EL Oel') == '2 EL Oel'
+        assert _fix_quantity_spacing("2EL Oel") == "2 EL Oel"
 
     def test_decimal(self):
-        assert _fix_quantity_spacing('1,5kg Kartoffeln') == '1,5 kg Kartoffeln'
+        assert _fix_quantity_spacing("1,5kg Kartoffeln") == "1,5 kg Kartoffeln"
 
     def test_no_unit(self):
-        assert _fix_quantity_spacing('3 Eier') == '3 Eier'
+        assert _fix_quantity_spacing("3 Eier") == "3 Eier"
 
 
 # -- _clean_source --
@@ -106,20 +105,20 @@ class TestFixQuantitySpacing:
 class TestCleanSource:
 
     def test_page_prefix(self):
-        assert _clean_source('22 lecker 03/2025') == 'lecker 03/2025'
+        assert _clean_source("22 lecker 03/2025") == "lecker 03/2025"
 
     def test_page_suffix(self):
-        assert _clean_source('lecker 03/2025 45') == 'lecker 03/2025'
+        assert _clean_source("lecker 03/2025 45") == "lecker 03/2025"
 
     def test_bild_auf_seite(self):
-        result = _clean_source('lecker Bild auf Seite 12 03/2025')
-        assert 'Bild auf Seite' not in result
+        result = _clean_source("lecker Bild auf Seite 12 03/2025")
+        assert "Bild auf Seite" not in result
 
     def test_empty(self):
-        assert _clean_source('') == ''
+        assert _clean_source("") == ""
 
     def test_clean_source_already(self):
-        assert _clean_source('lecker 03/2025') == 'lecker 03/2025'
+        assert _clean_source("lecker 03/2025") == "lecker 03/2025"
 
 
 # -- _find_recipe_image --
@@ -128,26 +127,26 @@ class TestCleanSource:
 class TestFindRecipeImage:
 
     def test_no_directory(self):
-        assert _find_recipe_image('/nicht/vorhanden') is None
+        assert _find_recipe_image("/nicht/vorhanden") is None
 
     def test_empty_directory(self, tmp_path):
         assert _find_recipe_image(str(tmp_path)) is None
 
     def test_finds_foto(self, tmp_path):
-        foto = tmp_path / 'region_1_foto.png'
-        foto.write_bytes(b'\x89PNG')
+        foto = tmp_path / "region_1_foto.png"
+        foto.write_bytes(b"\x89PNG")
         result = _find_recipe_image(str(tmp_path))
         assert result == str(foto)
 
     def test_ignores_non_foto(self, tmp_path):
-        (tmp_path / 'region_1_text.png').write_bytes(b'\x89PNG')
+        (tmp_path / "region_1_text.png").write_bytes(b"\x89PNG")
         assert _find_recipe_image(str(tmp_path)) is None
 
     def test_returns_first_sorted(self, tmp_path):
-        (tmp_path / 'b_foto.png').write_bytes(b'\x89PNG')
-        (tmp_path / 'a_foto.png').write_bytes(b'\x89PNG')
+        (tmp_path / "b_foto.png").write_bytes(b"\x89PNG")
+        (tmp_path / "a_foto.png").write_bytes(b"\x89PNG")
         result = _find_recipe_image(str(tmp_path))
-        assert 'a_foto.png' in result
+        assert "a_foto.png" in result
 
 
 # -- _render_html --
@@ -156,17 +155,20 @@ class TestFindRecipeImage:
 class TestRenderHtml:
 
     def test_replaces_tags(self):
-        template = '<h1><RECIPE_NAME></h1><p><SUBTITLE></p>'
-        result = _render_html(template, {
-            'RECIPE_NAME': 'Apfelkuchen',
-            'SUBTITLE': 'saftig',
-        })
-        assert result == '<h1>Apfelkuchen</h1><p>saftig</p>'
+        template = "<h1><RECIPE_NAME></h1><p><SUBTITLE></p>"
+        result = _render_html(
+            template,
+            {
+                "RECIPE_NAME": "Apfelkuchen",
+                "SUBTITLE": "saftig",
+            },
+        )
+        assert result == "<h1>Apfelkuchen</h1><p>saftig</p>"
 
     def test_missing_tag_unchanged(self):
-        template = '<p><UNKNOWN></p>'
-        result = _render_html(template, {'RECIPE_NAME': 'Test'})
-        assert '<UNKNOWN>' in result
+        template = "<p><UNKNOWN></p>"
+        result = _render_html(template, {"RECIPE_NAME": "Test"})
+        assert "<UNKNOWN>" in result
 
 
 # -- _unique_path --
@@ -175,20 +177,20 @@ class TestRenderHtml:
 class TestUniquePath:
 
     def test_no_conflict(self, tmp_path):
-        path = str(tmp_path / 'test.html')
+        path = str(tmp_path / "test.html")
         assert _unique_path(path) == path
 
     def test_with_conflict(self, tmp_path):
-        existing = tmp_path / 'test.html'
-        existing.write_text('x')
+        existing = tmp_path / "test.html"
+        existing.write_text("x")
         result = _unique_path(str(existing))
-        assert result.endswith('test_2.html')
+        assert result.endswith("test_2.html")
 
     def test_multiple_conflicts(self, tmp_path):
-        (tmp_path / 'test.html').write_text('x')
-        (tmp_path / 'test_2.html').write_text('x')
-        result = _unique_path(str(tmp_path / 'test.html'))
-        assert result.endswith('test_3.html')
+        (tmp_path / "test.html").write_text("x")
+        (tmp_path / "test_2.html").write_text("x")
+        result = _unique_path(str(tmp_path / "test.html"))
+        assert result.endswith("test_3.html")
 
 
 # -- _sum_minutes --
@@ -197,13 +199,13 @@ class TestUniquePath:
 class TestSumMinutes:
 
     def test_simple(self):
-        assert _sum_minutes('15 Min', '30 Min') == 45
+        assert _sum_minutes("15 Min", "30 Min") == 45
 
     def test_with_hours(self):
-        assert _sum_minutes('1 Std', '30 Min') == 90
+        assert _sum_minutes("1 Std", "30 Min") == 90
 
     def test_empty(self):
-        assert _sum_minutes('', '', '') == 0
+        assert _sum_minutes("", "", "") == 0
 
 
 # -- build_recipe_html --
@@ -212,89 +214,97 @@ class TestSumMinutes:
 class TestBuildRecipeHtml:
 
     def test_creates_html_file(self, tmp_path, monkeypatch):
-        monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
-        result = json.loads(build_recipe_html(
-            recipe_name='Testrezept',
-            ingredients=['200g Mehl', '3 Eier'],
-            instructions=['Mischen', 'Backen'],
-        ))
-        assert os.path.isfile(result['html_file'])
-        assert result['safe_name'] == 'testrezept'
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = json.loads(
+            build_recipe_html(
+                recipe_name="Testrezept",
+                ingredients=["200g Mehl", "3 Eier"],
+                instructions=["Mischen", "Backen"],
+            )
+        )
+        assert os.path.isfile(result["html_file"])
+        assert result["safe_name"] == "testrezept"
 
     def test_html_contains_recipe_name(self, tmp_path, monkeypatch):
-        monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
-        result = json.loads(build_recipe_html(
-            recipe_name='Apfelkuchen',
-        ))
-        with open(result['html_file'], encoding='utf-8') as f:
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = json.loads(
+            build_recipe_html(
+                recipe_name="Apfelkuchen",
+            )
+        )
+        with open(result["html_file"], encoding="utf-8") as f:
             html = f.read()
-        assert 'Apfelkuchen' in html
+        assert "Apfelkuchen" in html
 
     def test_ingredients_spacing_fixed(self, tmp_path, monkeypatch):
-        monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
-        result = json.loads(build_recipe_html(
-            recipe_name='Test',
-            ingredients=['250g Mehl'],
-        ))
-        with open(result['html_file'], encoding='utf-8') as f:
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = json.loads(
+            build_recipe_html(
+                recipe_name="Test",
+                ingredients=["250g Mehl"],
+            )
+        )
+        with open(result["html_file"], encoding="utf-8") as f:
             html = f.read()
-        assert '250 g Mehl' in html
+        assert "250 g Mehl" in html
 
     def test_image_copied(self, tmp_path, monkeypatch):
-        monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
-        tmp_dir = tmp_path / 'tmp'
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        tmp_dir = tmp_path / "tmp"
         tmp_dir.mkdir()
-        (tmp_dir / 'region_1_foto.png').write_bytes(b'\x89PNG')
+        (tmp_dir / "region_1_foto.png").write_bytes(b"\x89PNG")
 
-        result = json.loads(build_recipe_html(recipe_name='Bildtest'))
-        assert result['image_file']
-        assert os.path.isfile(result['image_file'])
+        result = json.loads(build_recipe_html(recipe_name="Bildtest"))
+        assert result["image_file"]
+        assert os.path.isfile(result["image_file"])
 
     def test_custom_template(self, tmp_path, monkeypatch):
-        monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
-        ausgang = tmp_path / 'Ausgang'
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        ausgang = tmp_path / "Ausgang"
         ausgang.mkdir()
-        (ausgang / 'Template.html').write_text(
-            '<h1><RECIPE_NAME></h1>', encoding='utf-8'
+        (ausgang / "Template.html").write_text(
+            "<h1><RECIPE_NAME></h1>", encoding="utf-8"
         )
-        result = json.loads(build_recipe_html(recipe_name='Custom'))
-        with open(result['html_file'], encoding='utf-8') as f:
+        result = json.loads(build_recipe_html(recipe_name="Custom"))
+        with open(result["html_file"], encoding="utf-8") as f:
             html = f.read()
-        assert html == '<h1>Custom</h1>'
+        assert html == "<h1>Custom</h1>"
 
     def test_source_cleaned(self, tmp_path, monkeypatch):
-        monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
-        result = json.loads(build_recipe_html(
-            recipe_name='Quelltest',
-            source='22 lecker 03/2025',
-        ))
-        with open(result['html_file'], encoding='utf-8') as f:
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = json.loads(
+            build_recipe_html(
+                recipe_name="Quelltest",
+                source="22 lecker 03/2025",
+            )
+        )
+        with open(result["html_file"], encoding="utf-8") as f:
             html = f.read()
-        assert 'lecker 03/2025' in html
+        assert "lecker 03/2025" in html
         # Seitenzahl 22 am Anfang sollte entfernt sein
-        assert '>22 lecker' not in html
+        assert ">22 lecker" not in html
 
     def test_index_updated(self, tmp_path, monkeypatch):
-        monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
-        ausgang = tmp_path / 'Ausgang'
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        ausgang = tmp_path / "Ausgang"
         ausgang.mkdir()
-        index_html = ausgang / 'index.html'
+        index_html = ausgang / "index.html"
         index_html.write_text(
-            '<!DOCTYPE html><html><body>'
-            '<section><h2>Hauptgerichte</h2><ul></ul></section>'
-            '</body></html>',
-            encoding='utf-8',
+            "<!DOCTYPE html><html><body>"
+            "<section><h2>Hauptgerichte</h2><ul></ul></section>"
+            "</body></html>",
+            encoding="utf-8",
         )
-        result = json.loads(build_recipe_html(recipe_name='Testgericht'))
-        assert 'Testgericht' in result['index_result']
+        result = json.loads(build_recipe_html(recipe_name="Testgericht"))
+        assert "Testgericht" in result["index_result"]
         # Pruefen dass index.html das Rezept enthaelt
-        updated = index_html.read_text(encoding='utf-8')
-        assert 'Testgericht' in updated
+        updated = index_html.read_text(encoding="utf-8")
+        assert "Testgericht" in updated
 
     def test_index_auto_created(self, tmp_path, monkeypatch):
-        monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
-        index_path = tmp_path / 'Ausgang' / 'index.html'
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        index_path = tmp_path / "Ausgang" / "index.html"
         assert not index_path.exists()
-        result = json.loads(build_recipe_html(recipe_name='Ohne Index'))
+        result = json.loads(build_recipe_html(recipe_name="Ohne Index"))
         assert index_path.exists()
-        assert 'Ohne Index' in result['index_result']
+        assert "Ohne Index" in result["index_result"]

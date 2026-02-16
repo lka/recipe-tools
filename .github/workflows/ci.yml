@@ -1,0 +1,38 @@
+# CI-Workflow: Tests und Code-Qualitaet
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Abhaengigkeiten installieren
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Linting mit flake8
+        run: flake8 src/ tests/
+
+      - name: Formatierung pruefen mit black
+        run: black --check src/ tests/
+
+      - name: Tests ausfuehren
+        run: pytest tests/ -v

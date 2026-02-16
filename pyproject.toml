@@ -29,3 +29,25 @@ recipe-server = "recipe_processor.server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/recipe_processor"]
+
+# --- Semantische Versionierung (python-semantic-release) ---
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+commit_parser = "conventional"
+tag_format = "v{version}"
+commit_message = "chore(release): {version}"
+allow_zero_version = true
+major_on_zero = false
+
+[tool.semantic_release.branches.main]
+match = "(main|master)"
+prerelease = false
+
+[tool.semantic_release.changelog]
+mode = "update"
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGELOG.md"
+output_format = "md"
+mask_initial_release = false

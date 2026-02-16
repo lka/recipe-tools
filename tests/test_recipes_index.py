@@ -5,7 +5,6 @@ import pytest
 
 from recipe_processor.core.recipes_index import RecipeIndexManager
 
-
 MINIMAL_INDEX = """\
 <!DOCTYPE html>
 <html>
