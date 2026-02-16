@@ -253,9 +253,10 @@ class RecipeIndexManager:
         Returns:
             Erfolgs-/Fehlermeldung.
         """
-        is_duplicate, existing_link = self.check_duplicate(recipe_name)
+        is_duplicate, _ = self.check_duplicate(recipe_name)
         if is_duplicate:
-            return f"Rezept existiert bereits: {existing_link}"
+            self._remove_entry(recipe_name)
+            logger.info("Bestehenden Eintrag entfernt fuer Update: %s", recipe_name)
 
         if not category:
             category = self.suggest_category(recipe_name)
@@ -285,7 +286,29 @@ class RecipeIndexManager:
         self._insert_sorted(soup, ul, recipe_name, recipe_file)
         self._save_index(soup)
 
-        return f"Rezept hinzugefuegt: {recipe_name} " f"in {category} ({recipe_file})"
+        action = "aktualisiert" if is_duplicate else "hinzugefuegt"
+        return f"Rezept {action}: {recipe_name} in {category} ({recipe_file})"
+
+    def _remove_entry(self, recipe_name: str) -> bool:
+        """Entfernt einen Rezept-Eintrag aus dem Index (ohne Rueckmeldung).
+
+        Args:
+            recipe_name: Name des Rezepts.
+
+        Returns:
+            True wenn entfernt, False wenn nicht gefunden.
+        """
+        soup = self._load_index()
+
+        for link in soup.find_all("a", class_="recipe"):
+            if link.get_text(strip=True).lower() == recipe_name.lower():
+                li = link.find_parent("li")
+                if li:
+                    li.decompose()
+                    self._save_index(soup)
+                    return True
+
+        return False
 
     def remove_recipe(self, recipe_name: str) -> str:
         """Entfernt ein Rezept aus dem Index.
@@ -296,22 +319,9 @@ class RecipeIndexManager:
         Returns:
             Erfolgs-/Fehlermeldung.
         """
-        soup = self._load_index()
-
-        found = False
-        for link in soup.find_all("a", class_="recipe"):
-            if link.get_text(strip=True).lower() == recipe_name.lower():
-                li = link.find_parent("li")
-                if li:
-                    li.decompose()
-                    found = True
-                    break
-
-        if not found:
-            return f"Rezept nicht gefunden: {recipe_name}"
-
-        self._save_index(soup)
-        return f"Rezept entfernt: {recipe_name}"
+        if self._remove_entry(recipe_name):
+            return f"Rezept entfernt: {recipe_name}"
+        return f"Rezept nicht gefunden: {recipe_name}"
 
     def list_recipes(self, category: str | None = None) -> dict[str, list[str]]:
         """Listet alle Rezepte auf (optional gefiltert nach Kategorie).

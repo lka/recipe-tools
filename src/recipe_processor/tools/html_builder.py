@@ -203,17 +203,6 @@ def _render_html(template: str, data: dict[str, str]) -> str:
     return result
 
 
-def _unique_path(path: str) -> str:
-    """Gibt einen eindeutigen Dateipfad zurueck (Suffix _2, _3, ...)."""
-    if not os.path.exists(path):
-        return path
-    base, ext = os.path.splitext(path)
-    counter = 2
-    while os.path.exists(f"{base}_{counter}{ext}"):
-        counter += 1
-    return f"{base}_{counter}{ext}"
-
-
 def build_recipe_html(
     recipe_name: str,
     subtitle: str = "",
@@ -300,7 +289,7 @@ def build_recipe_html(
     image_path_html = ""
     foto = _find_recipe_image(tmp_dir)
     if foto:
-        dest = _unique_path(os.path.join(images_dir, f"{safe_name}.png"))
+        dest = os.path.join(images_dir, f"{safe_name}.png")
         shutil.copy(foto, dest)
         image_file = dest
         image_path_html = "Images/" + os.path.basename(dest)
@@ -337,7 +326,7 @@ def build_recipe_html(
     html = _render_html(template, data)
 
     # Datei speichern
-    html_path = _unique_path(os.path.join(output_dir, f"{safe_name}.html"))
+    html_path = os.path.join(output_dir, f"{safe_name}.html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
 

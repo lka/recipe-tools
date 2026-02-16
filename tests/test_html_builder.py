@@ -14,7 +14,6 @@ from recipe_processor.tools.html_builder import (
     _render_html,
     _sanitize_filename,
     _sum_minutes,
-    _unique_path,
     build_recipe_html,
 )
 
@@ -169,28 +168,6 @@ class TestRenderHtml:
         template = "<p><UNKNOWN></p>"
         result = _render_html(template, {"RECIPE_NAME": "Test"})
         assert "<UNKNOWN>" in result
-
-
-# -- _unique_path --
-
-
-class TestUniquePath:
-
-    def test_no_conflict(self, tmp_path):
-        path = str(tmp_path / "test.html")
-        assert _unique_path(path) == path
-
-    def test_with_conflict(self, tmp_path):
-        existing = tmp_path / "test.html"
-        existing.write_text("x")
-        result = _unique_path(str(existing))
-        assert result.endswith("test_2.html")
-
-    def test_multiple_conflicts(self, tmp_path):
-        (tmp_path / "test.html").write_text("x")
-        (tmp_path / "test_2.html").write_text("x")
-        result = _unique_path(str(tmp_path / "test.html"))
-        assert result.endswith("test_3.html")
 
 
 # -- _sum_minutes --

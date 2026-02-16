@@ -148,9 +148,17 @@ class TestAddRecipe:
         names = recipes["Hauptgerichte"]
         assert names.index("Auflauf") < names.index("Curry")
 
-    def test_duplicate_rejected(self, manager):
-        result = manager.add_recipe("Curry", "curry2.html", "Hauptgerichte")
-        assert "existiert bereits" in result
+    def test_duplicate_updates(self, manager):
+        result = manager.add_recipe("Curry", "curry_neu.html", "Hauptgerichte")
+        assert "aktualisiert" in result
+        recipes = manager.list_recipes("Hauptgerichte")
+        assert "Curry" in recipes["Hauptgerichte"]
+
+    def test_duplicate_changes_category(self, manager):
+        manager.add_recipe("Curry", "curry.html", "Suppen")
+        recipes = manager.list_recipes()
+        assert "Curry" not in recipes.get("Hauptgerichte", [])
+        assert "Curry" in recipes["Suppen"]
 
     def test_auto_category(self, manager):
         result = manager.add_recipe("Kartoffelsuppe", "kartoffelsuppe.html")
