@@ -76,6 +76,7 @@ Das Tool uebernimmt automatisch:
 - index.html aktualisieren (oder aus Template erzeugen falls nicht vorhanden)
 
 ### 4. Qualitaetspruefung
+Erzeugte HTML-Datei im Edge-Browser oeffnen, damit der Nutzer das Ergebnis pruefen kann.
 Ergebnis pruefen:
 - Rezeptname korrekt? Umlaute richtig?
 - Zutaten vollstaendig und plausibel?
