@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """MCP-Server für Rezept-Extraktion aus PDFs."""
+
 import logging
 
 from fastmcp import FastMCP
@@ -7,7 +8,6 @@ from fastmcp import FastMCP
 from recipe_processor.tools.html_builder import build_recipe_html
 from recipe_processor.tools.image_selector.tools import (
     get_working_directory,
-    list_exported_regions,
     select_image_regions,
 )
 from recipe_processor.tools.prompt import RECIPE_PROMPT
@@ -55,11 +55,11 @@ def select_image_regions_tool(image_path: str | None = None) -> str:
     return select_image_regions(image_path)
 
 
-@mcp.tool()
-def list_exported_regions_tool() -> str:
-    """Listet alle exportierten Bildausschnitte auf."""
-    logger.info("Tool list_exported_regions aufgerufen")
-    return list_exported_regions()
+# @mcp.tool()
+# def list_exported_regions_tool() -> str:
+#     """Listet alle exportierten Bildausschnitte auf."""
+#     logger.info("Tool list_exported_regions aufgerufen")
+#     return list_exported_regions()
 
 
 @mcp.tool()

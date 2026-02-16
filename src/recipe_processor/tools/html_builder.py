@@ -276,8 +276,11 @@ def build_recipe_html(
 
     # Zutaten mit Ueberschriften-Erkennung und Spacing-Fix
     fixed_ingredients = [
-        _format_ingredient_heading(z) if re.match(r"^-{2,}\s+", z)
-        else _fix_quantity_spacing(z)
+        (
+            _format_ingredient_heading(z)
+            if re.match(r"^-{2,}\s+", z)
+            else _fix_quantity_spacing(z)
+        )
         for z in ingredients
     ]
     ingredients_html = (

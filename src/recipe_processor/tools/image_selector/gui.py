@@ -887,9 +887,7 @@ MIT License
         """Aktualisiert die Anzeige nach einer Drehung."""
         if self.create_ui:
             self._display_image()
-            rotation_text = {90: "90° rechts", -90: "90° links"}.get(
-                angle, "180°"
-            )
+            rotation_text = {90: "90° rechts", -90: "90° links"}.get(angle, "180°")
             self.status_bar.config(
                 text=f"Bild um {rotation_text} gedreht - Bereiche wurden zurückgesetzt"
             )

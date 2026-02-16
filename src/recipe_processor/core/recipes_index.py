@@ -21,9 +21,7 @@ except locale.Error:
     try:
         locale.setlocale(locale.LC_COLLATE, "German_Germany.1252")
     except locale.Error:
-        logger.warning(
-            "Deutsche Locale nicht verfuegbar, verwende Standard-Sortierung"
-        )
+        logger.warning("Deutsche Locale nicht verfuegbar, verwende Standard-Sortierung")
 
 
 class RecipeIndexManager:
@@ -101,9 +99,7 @@ class RecipeIndexManager:
         """
         sections = []
         for category in self.category_keywords:
-            sections.append(
-                f"<section>\n<h2>{category}</h2>\n<ul>\n</ul>\n</section>"
-            )
+            sections.append(f"<section>\n<h2>{category}</h2>\n<ul>\n</ul>\n</section>")
         categories_html = "\n".join(sections)
         html = _INDEX_TEMPLATE.replace("<CATEGORIES>", categories_html)
 
@@ -289,10 +285,7 @@ class RecipeIndexManager:
         self._insert_sorted(soup, ul, recipe_name, recipe_file)
         self._save_index(soup)
 
-        return (
-            f"Rezept hinzugefuegt: {recipe_name} "
-            f"in {category} ({recipe_file})"
-        )
+        return f"Rezept hinzugefuegt: {recipe_name} " f"in {category} ({recipe_file})"
 
     def remove_recipe(self, recipe_name: str) -> str:
         """Entfernt ein Rezept aus dem Index.

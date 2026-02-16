@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Tests für das Prompt-Template."""
+"""Tests fuer das Prompt-Template."""
 
 from recipe_processor.tools.prompt import RECIPE_PROMPT
 
 
 class TestRecipePrompt:
-    """Tests für RECIPE_PROMPT."""
+    """Tests fuer RECIPE_PROMPT."""
 
     def test_prompt_is_string(self):
         assert isinstance(RECIPE_PROMPT, str)
@@ -15,37 +15,34 @@ class TestRecipePrompt:
 
     def test_prompt_contains_workflow_sections(self):
         for section in (
-            '## Verzeichnisse',
-            '## Konnektoren',
-            '## Workflow',
-            '### 0. Vorbereitung',
-            '### 1. PDF-Analyse',
-            '### 2. Text strukturieren',
-            '### 3. Bild verarbeiten',
-            '### 4. HTML generieren',
-            '### 5. Index aktualisieren',
-            '### 6. Qualitätsprüfung',
-            '### 7. Protokollierung',
-            '### 8. Weitere Rezepte?',
+            "## Verfuegbare Tools",
+            "## Verzeichnisse",
+            "## Workflow",
+            "### 1. Bildauswahl & OCR",
+            "### 2. OCR-Text interpretieren und strukturieren",
+            "### 3. HTML erzeugen",
+            "### 4. Qualitaetspruefung",
+            "### 5. Weitere Rezepte?",
         ):
-            assert section in RECIPE_PROMPT, f'Abschnitt fehlt: {section}'
+            assert section in RECIPE_PROMPT, f"Abschnitt fehlt: {section}"
 
-    def test_prompt_contains_required_connectors(self):
-        for connector in (
-            'filesystem',
-            'image-selector',
-            'recipe-index',
-            'windows-launcher',
-            'tesseract',
+    def test_prompt_contains_available_tools(self):
+        for tool in (
+            "select_image_regions_tool",
+            "get_working_directory_tool",
+            "build_recipe_html_tool",
         ):
-            assert connector in RECIPE_PROMPT, f'Konnektor fehlt: {connector}'
+            assert tool in RECIPE_PROMPT, f"Tool fehlt: {tool}"
 
-    def test_prompt_contains_template_tags(self):
-        for tag in (
-            '<RECIPE_NAME>',
-            '<INGREDIENTS>',
-            '<INSTRUCTIONS>',
-            '<IMAGE_PATH>',
-            '<SOURCE>',
+    def test_prompt_contains_recipe_fields(self):
+        for field in (
+            "recipe_name",
+            "ingredients",
+            "instructions",
+            "source",
+            "category",
         ):
-            assert tag in RECIPE_PROMPT, f'Template-Tag fehlt: {tag}'
+            assert field in RECIPE_PROMPT, f"Feld fehlt: {field}"
+
+    def test_prompt_contains_ocr_hints(self):
+        assert "OCR" in RECIPE_PROMPT

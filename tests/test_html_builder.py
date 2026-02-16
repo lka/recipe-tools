@@ -240,7 +240,7 @@ class TestBuildRecipeHtml:
             html = f.read()
         assert '250 g Mehl' in html
 
-    def test_image_moved(self, tmp_path, monkeypatch):
+    def test_image_copied(self, tmp_path, monkeypatch):
         monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
         tmp_dir = tmp_path / 'tmp'
         tmp_dir.mkdir()
@@ -249,7 +249,6 @@ class TestBuildRecipeHtml:
         result = json.loads(build_recipe_html(recipe_name='Bildtest'))
         assert result['image_file']
         assert os.path.isfile(result['image_file'])
-        assert not os.path.exists(tmp_dir / 'region_1_foto.png')
 
     def test_custom_template(self, tmp_path, monkeypatch):
         monkeypatch.setenv('IMAGE_SELECTOR_WORKING_DIR', str(tmp_path))
