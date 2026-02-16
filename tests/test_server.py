@@ -9,7 +9,7 @@ class TestMcpServerSetup:
     """Tests für die MCP-Server-Konfiguration."""
 
     def test_server_name(self):
-        assert mcp.name == "PromptServer"
+        assert mcp.name == "recipe-server"
 
     def test_server_has_tools(self):
         tool_names = list(mcp._tool_manager._tools)

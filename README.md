@@ -65,7 +65,25 @@ pip install -e ".[dev]"
 
 [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) muss installiert und im PATH sein.
 
-## Server starten
+## MCP-Server konfigurieren
+
+Beispielkonfiguration fuer Claude Desktop (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "recipe-server": {
+      "command": "path/to/venv/Scripts/recipe-server",
+      "env": {
+        "IMAGE_SELECTOR_WORKING_DIR": "C:/Rezepte",
+        "IMAGE_SUBDIRECTORY": "Eingang"
+      }
+    }
+  }
+}
+```
+
+### Server manuell starten
 
 ```bash
 recipe-server
