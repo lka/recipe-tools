@@ -1,0 +1,39 @@
+[flake8]
+# Maximale Zeilenlänge (kompatibel mit Black)
+max-line-length = 88
+extend-ignore =
+    # E203: Whitespace before ':' (nicht kompatibel mit Black)
+    E203,
+    # E501: Line too long (wird von Black gehandhabt)
+    E501,
+    # W503: Line break before binary operator (veraltete Regel)
+    W503,
+    # E402: Module level import not at top of file
+    E402,
+    # F401: Module imported but unused (oft false positive bei __init__.py)
+    # F401,
+
+# Dateien und Verzeichnisse, die ignoriert werden sollen
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    .pytest_cache,
+    .eggs,
+    *.egg,
+    build,
+    dist,
+    .tox
+
+# Maximale Komplexität (McCabe)
+max-complexity = 10
+
+# Pro-Datei-Ignores (falls spezifische Dateien Ausnahmen brauchen)
+per-file-ignores =
+    __init__.py:F401,E402
+    tests/*:E501,F401
+
+# Docstring-Anforderungen lockern
+docstring-convention = google

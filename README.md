@@ -1,0 +1,143 @@
+# recipe-tools
+
+MCP-Server zur Rezept-Extraktion aus PDFs. Stellt Prompts und Tools bereit, mit denen
+ein LLM-Client (Claude Desktop, Cursor, etc.) PDF-Rezepte interaktiv in strukturierte
+HTML-Dateien umwandeln kann.
+
+## Funktionsweise
+
+Der `FastMCP`-Server in `server.py` registriert alle Endpunkte zentral:
+
+- **Prompt** `generate_recipe` -- Rezept-Workflow fuer MCP-Clients mit Prompt-Unterstuetzung
+- **Tool** `get_recipe_prompt` -- Rezept-Workflow fuer Clients die nur Tools unterstuetzen
+- **Tool** `select_image_regions_tool` -- GUI zur Bildausschnitt-Selektion mit OCR
+- **Tool** `list_exported_regions_tool` -- Listet exportierte Ausschnitte auf
+- **Tool** `get_working_directory_tool` -- Zeigt das Arbeitsverzeichnis an
+- **Tool** `build_recipe_html_tool` -- Erzeugt HTML aus strukturierten Rezeptdaten und aktualisiert den Index (erzeugt `index.html` automatisch aus Template, falls nicht vorhanden)
+
+## Projektstruktur
+
+```
+recipe-tools/
+├── pyproject.toml
+├── README.md
+├── CLAUDE.md
+├── .flake8
+├── src/
+│   └── recipe_processor/
+│       ├── __init__.py
+│       ├── server.py                  # Zentraler MCP-Server (FastMCP)
+│       ├── assets/
+│       │   ├── Template.html          # HTML-Template fuer einzelne Rezepte
+│       │   └── index_template.html    # HTML-Template fuer die Rezeptuebersicht
+│       ├── core/
+│       │   ├── __init__.py
+│       │   ├── utils.py              # Gemeinsame Utils (Pfade, Verzeichnisse)
+│       │   └── recipes_index.py      # Rezept-Index-Verwaltung (HTML-Manipulation)
+│       └── tools/
+│           ├── __init__.py
+│           ├── prompt.py              # RECIPE_PROMPT Konstante
+│           ├── html_builder.py        # HTML-Erzeugung aus Rezeptdaten
+│           └── image_selector/
+│               ├── __init__.py
+│               ├── tools.py           # Tool-Funktionen (select, list, get_dir)
+│               ├── gui.py             # Tkinter-GUI fuer Bildauswahl
+│               ├── export.py          # Region-Export + OCR
+│               ├── pdf_utils.py       # PDF-Bildextraktion (PyMuPDF)
+│               └── utils.py           # transform_coords (image_selector-spezifisch)
+└── tests/
+    ├── __init__.py
+    ├── test_prompt.py
+    ├── test_server.py
+    ├── test_html_builder.py
+    ├── test_image_selector_tools.py
+    └── test_recipes_index.py
+```
+
+## Installation
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+pip install -e ".[dev]"
+```
+
+### Voraussetzung
+
+[Tesseract OCR](https://github.com/tesseract-ocr/tesseract) muss installiert und im PATH sein.
+
+## Server starten
+
+```bash
+recipe-server
+```
+
+Oder als Modul:
+
+```bash
+python -m recipe_processor.server
+```
+
+## Tests und Linting
+
+```bash
+pytest tests/ -v
+flake8 src/ tests/
+black src/ tests/
+```
+
+## Standalone-Modi (ohne MCP-Server)
+
+### Image Selector (GUI)
+
+```bash
+python -m recipe_processor.tools.image_selector.tools --standalone
+```
+
+Laedt die `.env`-Datei automatisch (via `python-dotenv`).
+Ohne Argumente werden Bilder aus `IMAGE_SUBDIRECTORY` geladen.
+Optional kann ein Bildpfad direkt uebergeben werden:
+
+```bash
+python -m recipe_processor.tools.image_selector.tools --standalone pfad/zum/bild.jpg
+```
+
+### HTML Builder
+
+```bash
+python -m recipe_processor.tools.html_builder rezept.json
+```
+
+Erzeugt eine HTML-Datei aus einer JSON-Datei mit Rezeptdaten. Die JSON-Datei
+enthaelt die gleichen Felder wie die `build_recipe_html`-Funktion (`recipe_name`,
+`ingredients`, `instructions`, etc.). Laedt die `.env`-Datei automatisch.
+
+### Umgebungsvariablen (.env)
+
+| Variable | Beschreibung | Default |
+|----------|-------------|---------|
+| `IMAGE_SELECTOR_WORKING_DIR` | Arbeitsverzeichnis | `os.getcwd()` |
+| `IMAGE_SUBDIRECTORY` | Unterverzeichnis fuer Bilder (relativ zum Working Dir) | `""` (Working Dir selbst) |
+
+## Templates
+
+Im Verzeichnis `src/recipe_processor/assets/` liegen zwei HTML-Templates:
+
+- **Template.html** -- Vorlage fuer einzelne Rezept-HTML-Dateien. Platzhalter wie `<RECIPE_NAME>`, `<INGREDIENTS>`, `<INSTRUCTIONS>` etc. werden beim Erzeugen ersetzt.
+- **index_template.html** -- Vorlage fuer die Rezeptuebersicht (`index.html`). Enthaelt den Platzhalter `<CATEGORIES>`, der durch die Kategorie-Sections ersetzt wird. Wird automatisch verwendet, wenn im Ausgangsverzeichnis noch keine `index.html` existiert.
+
+### Zutaten-Ueberschriften
+
+Innerhalb der Zutatenliste koennen Ueberschriften mit dem Muster `--- Text ---` markiert werden. Diese werden automatisch in `<b>Text</b>` umgewandelt.
+
+## Abhaengigkeiten
+
+| Paket | Zweck |
+|-------|-------|
+| fastmcp | MCP-Server-Framework |
+| Pillow | Bildverarbeitung |
+| PyMuPDF | PDF-Bildextraktion |
+| pytesseract | OCR-Texterkennung |
+| beautifulsoup4 | HTML-Parsing (Rezept-Index) |
+| lxml | HTML-Parser-Backend fuer BeautifulSoup |
+| python-dotenv | .env-Datei laden (Standalone-Modus) |
