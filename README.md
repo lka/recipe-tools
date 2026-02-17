@@ -1,7 +1,7 @@
 # recipe-tools
 
 MCP-Server zur Rezept-Extraktion aus PDFs oder JPG-Dateien. Stellt Prompts und Tools bereit, mit denen
-ein LLM-Client (Claude Desktop, Cursor, etc.) PDF-Rezepte interaktiv in strukturierte
+ein LLM-Client (Claude Desktop, Cursor, etc.) gescannte Rezepte interaktiv in strukturierte
 HTML-Dateien umwandeln kann.
 
 ## Funktionsweise
