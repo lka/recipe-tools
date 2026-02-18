@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.2.1 (2026-02-18)
+
+### Bug Fixes
+
+- Nutrition "pro Person" eliminated
+  ([`871bef6`](https://github.com/lka/recipe-tools/commit/871bef6c7bc68aa54cc065b673b3eb6e298c690c))
+
+
 ## v0.2.0 (2026-02-16)
 
 ### Features
