@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.4.0 (2026-02-18)
+
+### Features
+
+- Remove empty TAGS from output
+  ([`0fd59ea`](https://github.com/lka/recipe-tools/commit/0fd59ea4b87108a488c2f0fd2d80fc8b5c6e36cf))
+
+
 ## v0.3.1 (2026-02-18)
 
 ### Bug Fixes
