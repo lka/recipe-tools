@@ -111,16 +111,17 @@
         <img src="<IMAGE_PATH>" alt="<RECIPE_NAME>" class="recipe-image">
         
         <div class="recipe-info">
-            <strong>⏱️ Vorbereitungszeit:</strong> <meta itemprop="prepTime" content="<PREP_TIME_ISO>"><PREP_TIME></span><br>
-            <strong>⏱️ Zubereitungszeit:</strong> <meta itemprop="cookTime" content="<COOK_TIME_ISO>"><COOK_TIME></span><br>
-            <strong>⏱️ Wartezeit:</strong> <meta itemprop="performTime" content="<WAIT_TIME_ISO>"><WAIT_TIME></span><br>
+            <!--IF:PREP_TIME--><strong>⏱️ Vorbereitungszeit:</strong> <meta itemprop="prepTime" content="<PREP_TIME_ISO>"><PREP_TIME></span><br><!--/IF:PREP_TIME-->
+            <!--IF:COOK_TIME--><strong>⏱️ Zubereitungszeit:</strong> <meta itemprop="cookTime" content="<COOK_TIME_ISO>"><COOK_TIME></span><br><!--/IF:COOK_TIME-->
+            <!--IF:WAIT_TIME--><strong>⏱️ Wartezeit:</strong> <meta itemprop="performTime" content="<WAIT_TIME_ISO>"><WAIT_TIME></span><br><!--/IF:WAIT_TIME-->
             <strong>⏱️ Gesamtzeit:</strong> <meta itemprop="totalTime" content="<TOTAL_TIME_ISO>"><TOTAL_TIME></span><br>
             <strong>👥 Portionen:</strong> <span itemprop="recipeYield"><PORTIONS></span><br>
         </div>
 
-        <div class="cookware">
+<!--IF:COOKWARE-->        <div class="cookware">
             <strong>🍳 Küchengeräte:</strong> <COOKWARE>
         </div>
+<!--/IF:COOKWARE-->
 
         <div class="ingredients">
             <h2>Zutaten</h2>
@@ -132,17 +133,18 @@
             <INSTRUCTIONS>
         </div>
 
-        <div class="recipe-comment">
+<!--IF:TIPS-->        <div class="recipe-comment">
             <strong>💡 Tipp:</strong> <TIPS>
         </div>
-
-        <div class="nutrition">
+<!--/IF:TIPS-->
+<!--IF:NUTRITION-->        <div class="nutrition">
             <strong>Nährwerte:</strong> <NUTRITION>
         </div>
-
-        <div class="recipe-source">
+<!--/IF:NUTRITION-->
+<!--IF:SOURCE-->        <div class="recipe-source">
             <strong>📚 Quelle:</strong> <SOURCE>
         </div>
+<!--/IF:SOURCE-->
 
         <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
     </div>

@@ -220,14 +220,28 @@ def _find_recipe_image(tmp_dir: str) -> str | None:
 def _render_html(template: str, data: dict[str, str]) -> str:
     """Ersetzt Template-Tags durch Rezeptdaten.
 
+    Unterstuetzt bedingte Bloecke: <!--IF:TAG-->Inhalt<!--/IF:TAG-->
+    werden nur ausgegeben, wenn der Feldwert nicht leer ist.
+
     Args:
-        template: HTML-Template mit <TAG>-Platzhaltern.
+        template: HTML-Template mit <TAG>- und <!--IF:TAG-->-Markern.
         data: Mapping von Tag-Name zu Wert.
 
     Returns:
         Befuelltes HTML.
     """
-    result = template
+
+    def _replace_block(match: re.Match) -> str:
+        tag = match.group(1)
+        content = match.group(2)
+        return content if data.get(tag) else ""
+
+    result = re.sub(
+        r"<!--IF:(\w+)-->(.*?)<!--/IF:\1-->",
+        _replace_block,
+        template,
+        flags=re.DOTALL,
+    )
     for tag, value in data.items():
         result = result.replace(f"<{tag}>", value)
     return result

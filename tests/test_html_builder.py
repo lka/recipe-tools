@@ -212,6 +212,21 @@ class TestRenderHtml:
         result = _render_html(template, {"RECIPE_NAME": "Test"})
         assert "<UNKNOWN>" in result
 
+    def test_conditional_block_shown(self):
+        template = "<!--IF:TIPS-->Tipp: <TIPS><!--/IF:TIPS-->"
+        result = _render_html(template, {"TIPS": "Gut wuerzen"})
+        assert result == "Tipp: Gut wuerzen"
+
+    def test_conditional_block_hidden(self):
+        template = "x<!--IF:TIPS-->Tipp: <TIPS><!--/IF:TIPS-->y"
+        result = _render_html(template, {"TIPS": ""})
+        assert result == "xy"
+
+    def test_conditional_block_multiline(self):
+        template = "<!--IF:SOURCE--><div><SOURCE></div><!--/IF:SOURCE-->"
+        result = _render_html(template, {"SOURCE": ""})
+        assert "<div>" not in result
+
 
 # -- _sum_minutes --
 
@@ -347,3 +362,34 @@ class TestBuildRecipeHtml:
         with open(result["html_file"], encoding="utf-8") as f:
             html = f.read()
         assert "COOKWARE" not in html
+        assert "Küchengeräte" not in html
+
+    def test_optionale_felder_leer_kein_block(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = json.loads(build_recipe_html(recipe_name="Leertest"))
+        with open(result["html_file"], encoding="utf-8") as f:
+            html = f.read()
+        assert "Tipp:" not in html
+        assert "Nährwerte:" not in html
+        assert "Quelle:" not in html
+        assert "Vorbereitungszeit:" not in html
+        assert "Zubereitungszeit:" not in html
+        assert "Wartezeit:" not in html
+
+    def test_optionale_felder_vorhanden(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = json.loads(
+            build_recipe_html(
+                recipe_name="Volltest",
+                prep_time="10 Min",
+                tips="Gut wuerzen",
+                nutrition="300 kcal",
+                source="lecker 03/2025",
+            )
+        )
+        with open(result["html_file"], encoding="utf-8") as f:
+            html = f.read()
+        assert "Vorbereitungszeit:" in html
+        assert "Tipp:" in html
+        assert "Nährwerte:" in html
+        assert "Quelle:" in html
