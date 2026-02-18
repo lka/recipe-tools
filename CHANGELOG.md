@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.3.1 (2026-02-18)
+
+### Bug Fixes
+
+- Signature of html_builder
+  ([`69dda34`](https://github.com/lka/recipe-tools/commit/69dda34579e1862cb5a48c61eca006c50eb85ce0))
+
+
 ## v0.3.0 (2026-02-18)
 
 ### Features
