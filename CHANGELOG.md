@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.3.0 (2026-02-18)
+
+### Features
+
+- Cookware added
+  ([`e516b81`](https://github.com/lka/recipe-tools/commit/e516b81b9665b435d4bb30596d63b93801b598ec))
+
+
 ## v0.2.1 (2026-02-18)
 
 ### Bug Fixes
