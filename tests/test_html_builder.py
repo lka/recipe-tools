@@ -8,6 +8,7 @@ import pytest
 
 from recipe_processor.tools.html_builder import (
     _clean_source,
+    _expand_je_ingredient,
     _find_recipe_image,
     _fix_quantity_spacing,
     _parse_iso_duration,
@@ -96,6 +97,48 @@ class TestFixQuantitySpacing:
 
     def test_no_unit(self):
         assert _fix_quantity_spacing("3 Eier") == "3 Eier"
+
+
+# -- _expand_je_ingredient --
+
+
+class TestExpandJeIngredient:
+
+    def test_zwei_zutaten_mit_einheit(self):
+        result = _expand_je_ingredient("je 1 TL Kreuzkümmel und Chilipulver")
+        assert result == ["1 TL Kreuzkümmel", "1 TL Chilipulver"]
+
+    def test_el_einheit(self):
+        result = _expand_je_ingredient("je 2 EL Olivenöl und Zitronensaft")
+        assert result == ["2 EL Olivenöl", "2 EL Zitronensaft"]
+
+    def test_prise_einheit(self):
+        result = _expand_je_ingredient("je 1 Prise Salz und Pfeffer")
+        assert result == ["1 Prise Salz", "1 Prise Pfeffer"]
+
+    def test_drei_zutaten_komma_und(self):
+        result = _expand_je_ingredient("je 1 TL Salz, Pfeffer und Paprika")
+        assert result == ["1 TL Salz", "1 TL Pfeffer", "1 TL Paprika"]
+
+    def test_gramm_ohne_leerzeichen(self):
+        result = _expand_je_ingredient("je 100g Karotten und Zucchini")
+        assert result == ["100g Karotten", "100g Zucchini"]
+
+    def test_dezimalzahl(self):
+        result = _expand_je_ingredient("je 1,5 TL Salz und Kumin")
+        assert result == ["1,5 TL Salz", "1,5 TL Kumin"]
+
+    def test_grossbuchstabe_je(self):
+        result = _expand_je_ingredient("Je 1 TL Oregano und Thymian")
+        assert result == ["1 TL Oregano", "1 TL Thymian"]
+
+    def test_kein_je_unveraendert(self):
+        result = _expand_je_ingredient("200 g Mehl")
+        assert result == ["200 g Mehl"]
+
+    def test_kein_und_einzel_zutat(self):
+        result = _expand_je_ingredient("je 1 TL Paprika")
+        assert result == ["1 TL Paprika"]
 
 
 # -- _clean_source --
@@ -285,3 +328,22 @@ class TestBuildRecipeHtml:
         result = json.loads(build_recipe_html(recipe_name="Ohne Index"))
         assert index_path.exists()
         assert "Ohne Index" in result["index_result"]
+
+    def test_cookware_in_html(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = json.loads(
+            build_recipe_html(
+                recipe_name="Geraetetest",
+                cookware=["Pfanne", "Topf", "Backofen"],
+            )
+        )
+        with open(result["html_file"], encoding="utf-8") as f:
+            html = f.read()
+        assert "Pfanne, Topf, Backofen" in html
+
+    def test_cookware_leer(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = json.loads(build_recipe_html(recipe_name="Ohnegeraet"))
+        with open(result["html_file"], encoding="utf-8") as f:
+            html = f.read()
+        assert "COOKWARE" not in html

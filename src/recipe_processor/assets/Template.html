@@ -76,6 +76,12 @@
             margin: 20px 0;
             font-size: 0.95em;
         }
+        .cookware {
+            background-color: #f0f4ff;
+            padding: 15px;
+            border-left: 4px solid #7986cb;
+            margin: 20px 0;
+        }
         .recipe-source {
             background-color: #f0f0f0;
             padding: 10px 15px;
@@ -110,6 +116,10 @@
             <strong>⏱️ Wartezeit:</strong> <meta itemprop="performTime" content="<WAIT_TIME_ISO>"><WAIT_TIME></span><br>
             <strong>⏱️ Gesamtzeit:</strong> <meta itemprop="totalTime" content="<TOTAL_TIME_ISO>"><TOTAL_TIME></span><br>
             <strong>👥 Portionen:</strong> <span itemprop="recipeYield"><PORTIONS></span><br>
+        </div>
+
+        <div class="cookware">
+            <strong>🍳 Küchengeräte:</strong> <COOKWARE>
         </div>
 
         <div class="ingredients">

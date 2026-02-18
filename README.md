@@ -140,12 +140,49 @@ enthaelt die gleichen Felder wie die `build_recipe_html`-Funktion (`recipe_name`
 
 Im Verzeichnis `src/recipe_processor/assets/` liegen zwei HTML-Templates:
 
-- **Template.html** -- Vorlage fuer einzelne Rezept-HTML-Dateien. Platzhalter wie `<RECIPE_NAME>`, `<INGREDIENTS>`, `<INSTRUCTIONS>` etc. werden beim Erzeugen ersetzt.
+- **Template.html** -- Vorlage fuer einzelne Rezept-HTML-Dateien. Platzhalter werden beim Erzeugen ersetzt:
+
+  | Platzhalter | Inhalt |
+  |-------------|--------|
+  | `<RECIPE_NAME>`, `<TITLE>` | Rezeptname |
+  | `<SUBTITLE>` | Kurzbeschreibung |
+  | `<IMAGE_PATH>` | Relativer Bildpfad |
+  | `<PREP_TIME>`, `<COOK_TIME>`, `<WAIT_TIME>`, `<TOTAL_TIME>` | Zeitangaben (Text) |
+  | `<PREP_TIME_ISO>`, `<COOK_TIME_ISO>`, `<WAIT_TIME_ISO>`, `<TOTAL_TIME_ISO>` | Zeitangaben (ISO 8601) |
+  | `<PORTIONS>` | Portionsangabe |
+  | `<COOKWARE>` | Benoetigte Kuechengeraete (kommagetrennt) |
+  | `<INGREDIENTS>` | Zutatenliste als `<ul>` |
+  | `<INSTRUCTIONS>` | Zubereitungsschritte als `<ol>` |
+  | `<TIPS>` | Tipps und Hinweise |
+  | `<NUTRITION>` | Naehrwertangaben |
+  | `<SOURCE>` | Quellangabe |
+
 - **index_template.html** -- Vorlage fuer die Rezeptuebersicht (`index.html`). Enthaelt den Platzhalter `<CATEGORIES>`, der durch die Kategorie-Sections ersetzt wird. Wird automatisch verwendet, wenn im Ausgangsverzeichnis noch keine `index.html` existiert.
 
 ### Zutaten-Ueberschriften
 
 Innerhalb der Zutatenliste koennen Ueberschriften mit dem Muster `--- Text ---` markiert werden. Diese werden automatisch in `<b>Text</b>` umgewandelt.
+
+### Zutaten mit gleicher Menge ("je"-Syntax)
+
+Zutaten der Form `je 1 TL Kreuzkuemmel und Chilipulver` werden automatisch in
+einzelne Eintraege mit gleicher Menge aufgesplittet:
+
+```
+je 1 TL Kreuzkümmel und Chilipulver  →  1 TL Kreuzkümmel
+                                         1 TL Chilipulver
+je 1 TL Salz, Pfeffer und Paprika    →  1 TL Salz
+                                         1 TL Pfeffer
+                                         1 TL Paprika
+```
+
+Bekannte Einheiten: `g`, `kg`, `mg`, `l`, `ml`, `cl`, `dl`, `EL`, `TL`, `Stk`, `Pck`, `Pkg`, `Pr`, `Prise`, `Msp`, `Bd`, `Bund`.
+
+### Kuechengeraete (`cookware`)
+
+Das optionale Feld `cookware` nimmt eine Liste von Geraeten entgegen und gibt sie
+kommagetrennt im HTML-Abschnitt "Kuechengeraete" aus. Fehlt das Feld oder ist es leer,
+bleibt der Abschnitt leer.
 
 ## Abhaengigkeiten
 

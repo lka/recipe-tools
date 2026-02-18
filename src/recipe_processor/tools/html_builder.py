@@ -51,12 +51,21 @@ _UNITS = (
     "Pck",
     "Pkg",
     "Pr",
+    "Prise",
     "Msp",
     "Bd",
     "Bund",
 )
 
 _UNIT_PATTERN = re.compile(r"(\d+[.,]?\d*)\s*(" + "|".join(_UNITS) + r")\b")
+
+# Muster fuer "je X Einheit Zutat1 und Zutat2"
+_UNITS_SORTED = sorted(_UNITS, key=len, reverse=True)
+_JE_SPLIT_PATTERN = re.compile(
+    r"^[Jj]e\s+"
+    r"(\d+[.,]?\d*(?:\s*(?:" + "|".join(_UNITS_SORTED) + r"))?)"
+    r"\s+(.+)$"
+)
 
 # -- Default HTML-Template --
 
@@ -150,6 +159,27 @@ def _fix_quantity_spacing(text: str) -> str:
     return _UNIT_PATTERN.sub(r"\1 \2", text)
 
 
+def _expand_je_ingredient(text: str) -> list[str]:
+    """Vereinzelt 'je X Einheit Zutat1 und Zutat2' in einzelne Zutaten.
+
+    Erkennt Zeilen wie "je 1 TL Kreuzkuemmel und Chilipulver" und gibt
+    pro Zutat eine eigene Zeile mit gleicher Menge zurueck.
+
+    Args:
+        text: Zutatzeile, ggf. mit "je"-Praefix und mehreren Zutaten.
+
+    Returns:
+        Liste mit einzelnen Zutaten, oder Liste mit der unveraenderten
+        Zeile, wenn das Muster nicht erkannt wird.
+    """
+    match = _JE_SPLIT_PATTERN.match(text)
+    if not match:
+        return [text]
+    amount, ingredient_part = match.group(1), match.group(2)
+    parts = re.split(r",\s*|\s+und\s+", ingredient_part)
+    return [f"{amount} {p.strip()}" for p in parts if p.strip()]
+
+
 def _clean_source(text: str) -> str:
     """Bereinigt Quellangaben.
 
@@ -212,6 +242,7 @@ def build_recipe_html(
     wait_time: str = "",
     ingredients: list[str] | None = None,
     instructions: list[str] | None = None,
+    cookware: list[str] | None = None,
     tips: str = "",
     nutrition: str = "",
     source: str = "",
@@ -233,6 +264,7 @@ def build_recipe_html(
         wait_time: Wartezeit, z.B. "1 Std".
         ingredients: Liste der Zutaten.
         instructions: Liste der Zubereitungsschritte.
+        cookware: Liste der benoetigen Kuechengeraete.
         tips: Tipps und Hinweise.
         nutrition: Naehrwertangaben.
         source: Quellangabe.
@@ -245,6 +277,8 @@ def build_recipe_html(
         ingredients = []
     if instructions is None:
         instructions = []
+    if cookware is None:
+        cookware = []
 
     working_dir = get_working_dir()
     tmp_dir = create_tmp_dir_if_needed()
@@ -263,14 +297,17 @@ def build_recipe_html(
     total_time = f"{total_min} Min" if total_min else ""
     total_iso = f"PT{total_min}M" if total_min else ""
 
-    # Zutaten mit Ueberschriften-Erkennung und Spacing-Fix
+    # Je-Zutaten vereinzeln, dann Ueberschriften-Erkennung und Spacing-Fix
+    expanded: list[str] = []
+    for z in ingredients:
+        expanded.extend(_expand_je_ingredient(z))
     fixed_ingredients = [
         (
             _format_ingredient_heading(z)
             if re.match(r"^-{2,}\s+", z)
             else _fix_quantity_spacing(z)
         )
-        for z in ingredients
+        for z in expanded
     ]
     ingredients_html = (
         "<ul>\n" + "\n".join(f"<li>{z}</li>" for z in fixed_ingredients) + "\n</ul>"
@@ -280,6 +317,9 @@ def build_recipe_html(
     instructions_html = (
         "<ol>\n" + "\n".join(f"<li>{s}</li>" for s in instructions) + "\n</ol>"
     )
+
+    # Kuechengeraete
+    cookware_str = ", ".join(cookware)
 
     # Quellen-Bereinigung
     clean_src = _clean_source(source)
@@ -319,6 +359,7 @@ def build_recipe_html(
         "PORTIONS": portions,
         "INGREDIENTS": ingredients_html,
         "INSTRUCTIONS": instructions_html,
+        "COOKWARE": cookware_str,
         "TIPS": tips,
         "NUTRITION": nutrition,
         "SOURCE": clean_src,

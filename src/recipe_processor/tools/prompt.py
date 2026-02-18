@@ -44,6 +44,7 @@ und folgende Felder extrahieren:
 | `wait_time` | "Wartezeit:", "Ruhezeit:", "Kuehlzeit:" (z.B. "1 Std") |
 | `ingredients` | Liste der Zutaten (nach "Zutaten:", "Du brauchst:") |
 | `instructions` | Liste der Zubereitungsschritte (nach "Zubereitung:", "So geht's:") |
+| `cookware` | Liste der benoetigten Kuechengeraete (z.B. ["Pfanne", "Topf", "Backofen"]) – optional |
 | `tips` | "Tipp:", "Hinweis:", "Info:" |
 | `nutrition` | "Naehrwerte pro Portion:", "kcal" |
 | `source` | Kurze Quellenangabe mit Jahreszahl/Monat (oft am Seitenrand/-fuss) |
@@ -56,6 +57,13 @@ und folgende Felder extrahieren:
 
 **Zutaten-Ueberschriften**: Gruppen wie "Fuer den Teig", "Fuer die Sauce"
 als `--- Ueberschrift ---` in die ingredients-Liste einfuegen.
+
+**Zutaten mit gleicher Menge**: "je 1 TL Kreuzkuemmel und Chilipulver" unveraendert
+uebernehmen – das Tool vereinzelt sie automatisch.
+
+**Kuechengeraete** (`cookware`): Wenn im Rezepttext explizit Geraete erwaehnt werden
+(z.B. "in einer beschichteten Pfanne", "im vorgeheizten Backofen"), als Liste extrahieren.
+Wenn keine Geraete genannt, Feld weglassen.
 
 **Validierung** vor dem Aufruf:
 - Rezeptname vorhanden?
