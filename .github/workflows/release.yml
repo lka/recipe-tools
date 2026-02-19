@@ -48,6 +48,9 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
+      - name: uv installieren
+        uses: astral-sh/setup-uv@v5
+
       - name: Release-Branch auf Workflow-SHA setzen
         run: git reset --hard ${{ github.sha }}
 
