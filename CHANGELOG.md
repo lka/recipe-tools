@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v0.6.0 (2026-02-19)
+
+### Bug Fixes
+
+- Pre-commit didn't find black
+  ([`6f04d33`](https://github.com/lka/recipe-tools/commit/6f04d33f59383b63a613401fae2e111266f7af8a))
+
+### Chores
+
+- Update uv.lock [skip ci]
+  ([`1cba0e9`](https://github.com/lka/recipe-tools/commit/1cba0e967025f12d4ba566961ce83a66d077eccb))
+
+### Features
+
+- Pre-commit hook installed
+  ([`33570bf`](https://github.com/lka/recipe-tools/commit/33570bfb423bbe83d88e7e1f4f30a7f9c564dd1e))
+
+
 ## v0.5.1 (2026-02-19)
 
 ### Bug Fixes
