@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.5.0 (2026-02-19)
+
+### Features
+
+- Project moved to uv usage
+  ([`de31ec6`](https://github.com/lka/recipe-tools/commit/de31ec67c52258a8936442eb02ee130fa21cee1d))
+
+
 ## v0.4.0 (2026-02-18)
 
 ### Features
