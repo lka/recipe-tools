@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.7.1 (2026-02-19)
+
+### Bug Fixes
+
+- Server version information as tool
+  ([`5c24810`](https://github.com/lka/recipe-tools/commit/5c2481024d912b442af8fa82ef29bd8ea7cac196))
+
+### Chores
+
+- Update uv.lock [skip ci]
+  ([`19ec475`](https://github.com/lka/recipe-tools/commit/19ec475bb2cde9e957a511bc7db00dc7777cefbf))
+
+
 ## v0.7.0 (2026-02-19)
 
 ### Chores
