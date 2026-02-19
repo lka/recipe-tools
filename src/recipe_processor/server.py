@@ -2,7 +2,8 @@
 """MCP-Server für Rezept-Extraktion aus PDFs."""
 
 import logging
-from importlib.metadata import version
+import tomllib
+from pathlib import Path
 
 from fastmcp import FastMCP
 
@@ -15,9 +16,20 @@ from recipe_processor.tools.prompt import RECIPE_PROMPT
 
 logger = logging.getLogger(__name__)
 
-mcp = FastMCP(
-    name="recipe-server", version=version("recipe-tools"), on_duplicate="error"
-)
+_PYPROJECT = Path(__file__).resolve().parent.parent.parent / "pyproject.toml"
+with _PYPROJECT.open("rb") as _f:
+    _VERSION = tomllib.load(_f)["project"]["version"]
+
+mcp = FastMCP(name="recipe-server", version=_VERSION, on_duplicate="error")
+
+
+# --- Version ---
+
+
+@mcp.tool()
+def get_server_version() -> str:
+    """Gibt die aktuelle Version des recipe-servers zurueck."""
+    return _VERSION
 
 
 # --- Prompt-Tools ---

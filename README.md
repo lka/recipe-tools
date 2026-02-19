@@ -13,6 +13,7 @@ Der `FastMCP`-Server in `server.py` registriert alle Endpunkte zentral:
 - **Tool** `select_image_regions_tool` -- GUI zur Bildausschnitt-Selektion mit OCR
 - **Tool** `get_working_directory_tool` -- Zeigt das Arbeitsverzeichnis an
 - **Tool** `build_recipe_html_tool` -- Erzeugt HTML aus strukturierten Rezeptdaten und aktualisiert den Index (erzeugt `index.html` automatisch aus Template, falls nicht vorhanden)
+- **Tool** `get_server_version` -- Gibt die aktuelle Versionsnummer des Servers zurueck
 
 ## Projektstruktur
 

@@ -16,6 +16,7 @@ class TestMcpServerSetup:
     def test_server_has_tools(self):
         tools = asyncio.run(mcp.list_tools())
         tool_names = [t.name for t in tools]
+        assert "get_server_version" in tool_names
         assert "get_recipe_prompt" in tool_names
         assert "select_image_regions_tool" in tool_names
         assert "get_working_directory_tool" in tool_names
