@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v0.5.1 (2026-02-19)
+
+### Bug Fixes
+
+- Remove loop in git push -> Release -> git pull -> uv sync
+  ([`b6ea63c`](https://github.com/lka/recipe-tools/commit/b6ea63cd0c3f66778d33b3ff16b03f51708bcc63))
+
+- Use uv in github
+  ([`64a33f3`](https://github.com/lka/recipe-tools/commit/64a33f3a05bfd83f7bf6c53dc178ab46e9e7f33d))
+
+
 ## v0.5.0 (2026-02-19)
 
 ### Features
