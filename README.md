@@ -79,10 +79,12 @@ Danach Terminal neu starten.
 
 ```bash
 uv sync --extra dev
+git config core.hooksPath .githooks
 ```
 
 uv legt `venv/` an, installiert alle Abhaengigkeiten und sperrt die genauen
-Versionen in `uv.lock`.
+Versionen in `uv.lock`. Der zweite Befehl aktiviert den pre-push Hook (laeuft
+einmalig nach dem Klonen).
 
 ### Voraussetzung
 
@@ -125,6 +127,24 @@ uv run pytest
 uv run flake8 src/ tests/
 uv run black src/ tests/
 ```
+
+Der pre-push Hook (`.githooks/pre-push`) fuehrt diese drei Schritte automatisch
+vor jedem `git push` aus: black formatiert den Code, flake8 prueft auf Fehler,
+pytest fuehrt die Tests aus. Hat black Aenderungen vorgenommen, wird der Push
+abgebrochen -- die Formatierungen muessen dann noch committet werden.
+
+## CI/CD
+
+Die GitHub Actions Workflows (`.github/workflows/`) verwenden ebenfalls `uv`:
+
+- **CI** (`ci.yml`): laeuft bei jedem Push und PR -- Linting, Formatierung, Tests
+- **Release** (`release.yml`): erstellt bei Pushes auf `main` automatisch ein neues
+  Release per `python-semantic-release`, wenn konventionelle Commits vorhanden sind
+  (`feat:`, `fix:`, etc.). Nach einem Release wird `uv.lock` automatisch
+  aktualisiert und mit `[skip ci]` committed.
+
+`uv.lock` ist Teil des Repositories und sichert reproduzierbare Installs. Nach
+einem `git pull` genuegt `uv sync --extra dev`, um die Umgebung zu aktualisieren.
 
 ## Standalone-Modi (ohne MCP-Server)
 

@@ -7,7 +7,8 @@
       "Bash(\"c:\\\\Users\\\\herbe\\\\Documents\\\\Development\\\\recipe-tools\\\\venv\\\\Scripts\\\\python.exe\" -m pytest:*)",
       "Bash(\"c:\\\\Users\\\\herbe\\\\Documents\\\\Development\\\\recipe-tools\\\\venv\\\\Scripts\\\\python.exe\":*)",
       "WebFetch(domain:python-semantic-release.readthedocs.io)",
-      "Bash(uv:*)"
+      "Bash(uv:*)",
+      "Bash(git config:*)"
     ]
   }
 }

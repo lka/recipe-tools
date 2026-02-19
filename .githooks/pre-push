@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+echo "--- Formatierung (black) ---"
+uv run black src/ tests/
+if ! git diff --quiet; then
+    echo "black hat Formatierungen vorgenommen. Bitte die Änderungen stagen und committen."
+    exit 1
+fi
+
+echo "--- Linting (flake8) ---"
+uv run flake8 src/ tests/
+
+echo "--- Tests ---"
+uv run pytest
