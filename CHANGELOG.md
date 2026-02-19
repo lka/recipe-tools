@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v0.7.0 (2026-02-19)
+
+### Chores
+
+- Update uv.lock [skip ci]
+  ([`79024f5`](https://github.com/lka/recipe-tools/commit/79024f5811895b3399af634094afb1e5f4a44723))
+
+### Features
+
+- Version number for MCP Client added
+  ([`70b0dfd`](https://github.com/lka/recipe-tools/commit/70b0dfd3caa40f17b335270c88f34920130d9edd))
+
+- Version number to MCP Server added
+  ([`9f607c5`](https://github.com/lka/recipe-tools/commit/9f607c5df78eea9916f3eafabcae5baf9026bdc7))
+
+
 ## v0.6.0 (2026-02-19)
 
 ### Bug Fixes
