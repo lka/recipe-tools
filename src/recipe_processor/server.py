@@ -2,6 +2,7 @@
 """MCP-Server für Rezept-Extraktion aus PDFs."""
 
 import logging
+from importlib.metadata import version
 
 from fastmcp import FastMCP
 
@@ -14,7 +15,7 @@ from recipe_processor.tools.prompt import RECIPE_PROMPT
 
 logger = logging.getLogger(__name__)
 
-mcp = FastMCP(name="recipe-server", on_duplicate="error")
+mcp = FastMCP(name="recipe-server", version=version("recipe-tools"), on_duplicate="error")
 
 
 # --- Prompt-Tools ---
