@@ -55,11 +55,34 @@ recipe-tools/
 
 ## Installation
 
-```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -e ".[dev]"
+### uv installieren (einmalig)
+
+```powershell
+# Option 1: winget
+winget install astral-sh.uv
+
+# Option 2: pip
+pip install uv
 ```
+
+Danach Terminal neu starten, damit `uv` im PATH ist.
+
+### Umgebungsvariable setzen (einmalig, damit uv `venv/` statt `.venv/` verwendet)
+
+```powershell
+[System.Environment]::SetEnvironmentVariable("UV_PROJECT_ENVIRONMENT", "venv", "User")
+```
+
+Danach Terminal neu starten.
+
+### Projekt einrichten
+
+```bash
+uv sync --extra dev
+```
+
+uv legt `venv/` an, installiert alle Abhaengigkeiten und sperrt die genauen
+Versionen in `uv.lock`.
 
 ### Voraussetzung
 
@@ -86,21 +109,21 @@ Beispielkonfiguration fuer Claude Desktop (`claude_desktop_config.json`):
 ### Server manuell starten
 
 ```bash
-recipe-server
+uv run recipe-server
 ```
 
 Oder als Modul:
 
 ```bash
-python -m recipe_processor.server
+uv run python -m recipe_processor.server
 ```
 
 ## Tests und Linting
 
 ```bash
-pytest tests/ -v
-flake8 src/ tests/
-black src/ tests/
+uv run pytest
+uv run flake8 src/ tests/
+uv run black src/ tests/
 ```
 
 ## Standalone-Modi (ohne MCP-Server)
@@ -108,7 +131,7 @@ black src/ tests/
 ### Image Selector (GUI)
 
 ```bash
-python -m recipe_processor.tools.image_selector.tools --standalone
+uv run python -m recipe_processor.tools.image_selector.tools --standalone
 ```
 
 Laedt die `.env`-Datei automatisch (via `python-dotenv`).
@@ -116,13 +139,13 @@ Ohne Argumente werden Bilder aus `IMAGE_SUBDIRECTORY` geladen.
 Optional kann ein Bildpfad direkt uebergeben werden:
 
 ```bash
-python -m recipe_processor.tools.image_selector.tools --standalone pfad/zum/bild.jpg
+uv run python -m recipe_processor.tools.image_selector.tools --standalone pfad/zum/bild.jpg
 ```
 
 ### HTML Builder
 
 ```bash
-python -m recipe_processor.tools.html_builder rezept.json
+uv run python -m recipe_processor.tools.html_builder rezept.json
 ```
 
 Erzeugt eine HTML-Datei aus einer JSON-Datei mit Rezeptdaten. Die JSON-Datei
@@ -182,7 +205,13 @@ Bekannte Einheiten: `g`, `kg`, `mg`, `l`, `ml`, `cl`, `dl`, `EL`, `TL`, `Stk`, `
 
 Das optionale Feld `cookware` nimmt eine Liste von Geraeten entgegen und gibt sie
 kommagetrennt im HTML-Abschnitt "Kuechengeraete" aus. Fehlt das Feld oder ist es leer,
-bleibt der Abschnitt leer.
+wird der Abschnitt komplett ausgeblendet.
+
+### Optionale Felder und bedingte HTML-Bloecke
+
+Die Felder `prep_time`, `cook_time`, `wait_time`, `cookware`, `tips`, `nutrition`
+und `source` sind optional. Ist ein Feld leer, wird der zugehoerige HTML-Block
+vollstaendig weggelassen (keine leere Ueberschrift im Output).
 
 ## Abhaengigkeiten
 

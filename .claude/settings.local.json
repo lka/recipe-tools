@@ -6,7 +6,8 @@
       "Bash(\"c:\\\\Users\\\\herbe\\\\Documents\\\\Development\\\\recipe-tools\\\\venv\\\\Scripts\\\\pip.exe\" install -e \"c:\\\\Users\\\\herbe\\\\Documents\\\\Development\\\\recipe-tools[dev]\")",
       "Bash(\"c:\\\\Users\\\\herbe\\\\Documents\\\\Development\\\\recipe-tools\\\\venv\\\\Scripts\\\\python.exe\" -m pytest:*)",
       "Bash(\"c:\\\\Users\\\\herbe\\\\Documents\\\\Development\\\\recipe-tools\\\\venv\\\\Scripts\\\\python.exe\":*)",
-      "WebFetch(domain:python-semantic-release.readthedocs.io)"
+      "WebFetch(domain:python-semantic-release.readthedocs.io)",
+      "Bash(uv:*)"
     ]
   }
 }

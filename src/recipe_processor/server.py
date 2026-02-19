@@ -14,7 +14,7 @@ from recipe_processor.tools.prompt import RECIPE_PROMPT
 
 logger = logging.getLogger(__name__)
 
-mcp = FastMCP(name="recipe-server", on_duplicate_prompts="error")
+mcp = FastMCP(name="recipe-server", on_duplicate="error")
 
 
 # --- Prompt-Tools ---

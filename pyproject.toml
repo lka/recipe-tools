@@ -30,6 +30,9 @@ recipe-server = "recipe_processor.server:main"
 [tool.hatch.build.targets.wheel]
 packages = ["src/recipe_processor"]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 # --- Semantische Versionierung (python-semantic-release) ---
 
 [tool.semantic_release]

@@ -7,8 +7,9 @@ Hier nur Architektur-Wissen und Konventionen fuer die Entwicklung.
 
 - **Zentrale Server-Registrierung**: `server.py` importiert reine Funktionen aus `tools/`
   und wrapped sie mit `@mcp.tool()` + Logging. Tool-Module haben keine FastMCP-Abhaengigkeit.
-- **FastMCP-Internals in Tests**: `mcp._tool_manager._tools` (dict), `mcp._prompt_manager._prompts`
-  (dict), `tool.fn()` zum Aufrufen der zugrundeliegenden Funktion.
+- **FastMCP-Internals in Tests** (FastMCP >= 3.0): `asyncio.run(mcp.list_tools())` liefert
+  Liste mit `.name`; `asyncio.run(mcp.get_tool("name"))` liefert Tool-Objekt mit `.fn()`;
+  analog `mcp.list_prompts()` / `mcp.get_prompt("name")` fuer Prompts.
 - **Shared Utils in `core/`**: Gemeinsam genutzte Funktionen (`get_working_dir`,
   `create_tmp_dir_if_needed`, `cleanup_tmp_dir`, `get_image_subdirectory`) leben in
   `core/utils.py`. Image-selector-spezifisches (`transform_coords`) bleibt in

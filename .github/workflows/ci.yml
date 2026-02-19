@@ -18,21 +18,17 @@ jobs:
       - name: Repository auschecken
         uses: actions/checkout@v4
 
-      - name: Python einrichten
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: uv installieren
+        uses: astral-sh/setup-uv@v5
 
       - name: Abhaengigkeiten installieren
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+        run: uv sync --extra dev
 
       - name: Linting mit flake8
-        run: flake8 src/ tests/
+        run: uv run flake8 src/ tests/
 
       - name: Formatierung pruefen mit black
-        run: black --check src/ tests/
+        run: uv run black --check src/ tests/
 
       - name: Tests ausfuehren
-        run: pytest tests/ -v
+        run: uv run pytest -v
