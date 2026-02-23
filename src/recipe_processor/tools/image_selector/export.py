@@ -3,7 +3,7 @@
 import os
 import sys
 from datetime import datetime
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageFilter
 
 try:
     import pytesseract
@@ -12,6 +12,19 @@ try:
 except ImportError:
     pytesseract = None
     TESSERACT_AVAILABLE = False
+
+
+def _preprocess_for_ocr(image: Image.Image) -> Image.Image:
+    """Bereitet ein Bild fuer bessere OCR-Erkennungsrate vor.
+
+    Konvertiert zu Graustufen, skaliert hoch und erhoehe Kontrast/Schaerfe.
+    """
+    img = image.convert("L")
+    w, h = img.size
+    img = img.resize((w * 2, h * 2), Image.LANCZOS)
+    img = ImageEnhance.Contrast(img).enhance(2.0)
+    img = img.filter(ImageFilter.SHARPEN)
+    return img
 
 
 def format_export_paths(
@@ -95,9 +108,12 @@ def export_regions(
                 ocr_text = ""
                 if TESSERACT_AVAILABLE and pytesseract:
                     try:
-                        # Tesseract auf dem Crop-Bild ausführen
-                        # Sprache: Deutsch + Englisch
-                        ocr_text = pytesseract.image_to_string(crop, lang="deu+eng")
+                        ocr_image = _preprocess_for_ocr(crop)
+                        ocr_text = pytesseract.image_to_string(
+                            ocr_image,
+                            lang="deu+eng",
+                            config="--psm 6 --oem 3",
+                        )
                         if ocr_text.strip():
                             ocr_text = ocr_text.strip()
                         else:
