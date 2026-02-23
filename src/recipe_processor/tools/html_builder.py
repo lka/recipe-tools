@@ -5,6 +5,7 @@ import json
 import os
 import re
 import shutil
+import webbrowser
 from pathlib import Path
 
 from recipe_processor.core.utils import (
@@ -384,6 +385,7 @@ def build_recipe_html(
     html_path = os.path.join(output_dir, f"{safe_name}.html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
+    webbrowser.open(html_path)
 
     # Index aktualisieren (ggf. aus Template erzeugen)
     index_result = ""
