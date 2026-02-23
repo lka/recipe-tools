@@ -10,7 +10,7 @@ Der `FastMCP`-Server in `server.py` registriert alle Endpunkte zentral:
 
 - **Prompt** `generate_recipe` -- Rezept-Workflow fuer MCP-Clients mit Prompt-Unterstuetzung
 - **Tool** `get_recipe_prompt` -- Rezept-Workflow fuer Clients die nur Tools unterstuetzen
-- **Tool** `select_image_regions_tool` -- GUI zur Bildausschnitt-Selektion mit OCR
+- **Tool** `select_image_regions_tool` -- Web-GUI zur Bildausschnitt-Selektion mit OCR (oeffnet Browser automatisch)
 - **Tool** `get_working_directory_tool` -- Zeigt das Arbeitsverzeichnis an
 - **Tool** `build_recipe_html_tool` -- Erzeugt HTML aus strukturierten Rezeptdaten und aktualisiert den Index (erzeugt `index.html` automatisch aus Template, falls nicht vorhanden)
 - **Tool** `get_server_version` -- Gibt die aktuelle Versionsnummer des Servers zurueck
@@ -41,7 +41,8 @@ recipe-tools/
 │           └── image_selector/
 │               ├── __init__.py
 │               ├── tools.py           # Tool-Funktionen (select, list, get_dir)
-│               ├── gui.py             # Tkinter-GUI fuer Bildauswahl
+│               ├── web_gui.py         # Browser-GUI (FastAPI + HTML Canvas)
+│               ├── gui.py             # Tkinter-GUI (inaktiv, Backup)
 │               ├── export.py          # Region-Export + OCR
 │               ├── pdf_utils.py       # PDF-Bildextraktion (PyMuPDF)
 │               └── utils.py           # transform_coords (image_selector-spezifisch)
@@ -51,6 +52,7 @@ recipe-tools/
     ├── test_server.py
     ├── test_html_builder.py
     ├── test_image_selector_tools.py
+    ├── test_web_gui.py
     └── test_recipes_index.py
 ```
 
@@ -149,13 +151,13 @@ einem `git pull` genuegt `uv sync --extra dev`, um die Umgebung zu aktualisieren
 
 ## Standalone-Modi (ohne MCP-Server)
 
-### Image Selector (GUI)
+### Image Selector (Web-GUI)
 
 ```bash
 uv run python -m recipe_processor.tools.image_selector.tools --standalone
 ```
 
-Laedt die `.env`-Datei automatisch (via `python-dotenv`).
+Oeffnet die Browser-GUI automatisch. Laedt die `.env`-Datei automatisch (via `python-dotenv`).
 Ohne Argumente werden Bilder aus `IMAGE_SUBDIRECTORY` geladen.
 Optional kann ein Bildpfad direkt uebergeben werden:
 
@@ -245,3 +247,5 @@ vollstaendig weggelassen (keine leere Ueberschrift im Output).
 | beautifulsoup4 | HTML-Parsing (Rezept-Index) |
 | lxml | HTML-Parser-Backend fuer BeautifulSoup |
 | python-dotenv | .env-Datei laden (Standalone-Modus) |
+| fastapi | Web-Framework fuer Browser-GUI |
+| uvicorn | ASGI-Server fuer Browser-GUI |
