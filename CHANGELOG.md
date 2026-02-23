@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.9.1 (2026-02-23)
+
+### Chores
+
+- Update uv.lock [skip ci]
+  ([`de0d380`](https://github.com/lka/recipe-tools/commit/de0d3808db80c8502dd0ee7837ac84dece1dcc6c))
+
+
 ## v0.9.0 (2026-02-23)
 
 ### Chores
