@@ -755,10 +755,21 @@ class WebImageSelectorGUI:
         Returns:
             Konfigurierte FastAPI-Instanz mit allen Routen.
         """
-        from fastapi import FastAPI, Request
-        from fastapi.responses import HTMLResponse, JSONResponse
+        from fastapi import FastAPI
 
         app = FastAPI(title="Image Selector")
+        self._register_read_routes(app)
+        self._register_write_routes(app)
+        return app
+
+    def _register_read_routes(self, app):
+        """Registriert lesende Routen (GET + Navigation).
+
+        Args:
+            app: FastAPI-Instanz.
+        """
+        from fastapi.responses import HTMLResponse, JSONResponse
+
         gui = self
 
         @app.get("/", response_class=HTMLResponse)
@@ -777,14 +788,25 @@ class WebImageSelectorGUI:
         def select_image(index: int):
             return JSONResponse(gui._select_image_api(index))
 
+        @app.post("/api/clear_regions")
+        def clear_regions():
+            return JSONResponse(gui._clear_regions_api())
+
+    def _register_write_routes(self, app):
+        """Registriert schreibende Routen (POST mit Body).
+
+        Args:
+            app: FastAPI-Instanz.
+        """
+        from fastapi import Request
+        from fastapi.responses import JSONResponse
+
+        gui = self
+
         @app.post("/api/save_region")
         async def save_region(request: Request):
             body = await request.json()
             return JSONResponse(gui._save_region_api(body))
-
-        @app.post("/api/clear_regions")
-        def clear_regions():
-            return JSONResponse(gui._clear_regions_api())
 
         @app.post("/api/rotate")
         async def rotate(request: Request):
@@ -803,8 +825,6 @@ class WebImageSelectorGUI:
         @app.post("/api/cancel")
         def cancel():
             return JSONResponse(gui._cancel_api())
-
-        return app
 
     def _find_free_port(self) -> int:
         """Findet einen freien TCP-Port auf localhost.
