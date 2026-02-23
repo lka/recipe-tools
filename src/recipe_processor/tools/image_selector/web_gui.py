@@ -489,9 +489,7 @@ class WebImageSelectorGUI:
                     os.path.join(self.working_dir, image_path)
                 )
             if extracted_path is None:
-                raise ValueError(
-                    f"Konnte kein Bild aus PDF extrahieren: {image_path}"
-                )
+                raise ValueError(f"Konnte kein Bild aus PDF extrahieren: {image_path}")
             actual_image_path = extracted_path
         else:
             actual_image_path = image_path
@@ -593,7 +591,7 @@ class WebImageSelectorGUI:
                     ),
                 }
             )
-        w, h = (self.image.size if self.image else (0, 0))
+        w, h = self.image.size if self.image else (0, 0)
         return {
             "current_index": self.current_image_index,
             "images": images_list,
