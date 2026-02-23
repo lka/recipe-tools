@@ -5,7 +5,7 @@ import os
 import sys
 
 from .export import export_regions
-from .gui import ImageSelectorGUI
+from .web_gui import WebImageSelectorGUI as ImageSelectorGUI
 from recipe_processor.core.utils import create_tmp_dir_if_needed, get_working_dir
 
 from .utils import transform_coords
