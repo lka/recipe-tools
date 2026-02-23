@@ -2,6 +2,29 @@
 
 <!-- version list -->
 
+## v0.8.0 (2026-02-23)
+
+### Chores
+
+- Update uv.lock [skip ci]
+  ([`4e9f9fa`](https://github.com/lka/recipe-tools/commit/4e9f9fad3f32b2ac3ed88bc160b66609e1d3e21b))
+
+### Code Style
+
+- Apply black formatting to web_gui.py
+  ([`32ebb4d`](https://github.com/lka/recipe-tools/commit/32ebb4d43dc440d64a85f5fa19e53ff5199b7697))
+
+### Features
+
+- Removed tkinter gui and added html gui
+  ([`ee5548c`](https://github.com/lka/recipe-tools/commit/ee5548c80e22ef8395aedad87d2051a4c349f572))
+
+### Refactoring
+
+- Split _build_app to satisfy flake8 C901 complexity limit
+  ([`93cea9e`](https://github.com/lka/recipe-tools/commit/93cea9edaa151cb7d531d88094ac71336a69f8f6))
+
+
 ## v0.7.1 (2026-02-19)
 
 ### Bug Fixes
