@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v0.9.0 (2026-02-23)
+
+### Chores
+
+- Update uv.lock [skip ci]
+  ([`292ab30`](https://github.com/lka/recipe-tools/commit/292ab306ea16575cb0a655680ac3c877d8530d70))
+
+### Features
+
+- Show HTML for corrections programmatically
+  ([`5fb205b`](https://github.com/lka/recipe-tools/commit/5fb205b51da2411061125f5e5ede67f51c0b396f))
+
+### Testing
+
+- Remove get_working_directory_tool from prompt tool assertions
+  ([`c26c950`](https://github.com/lka/recipe-tools/commit/c26c950cee16cf3855b85411fa39c00ac65a11a3))
+
+
 ## v0.8.0 (2026-02-23)
 
 ### Chores
