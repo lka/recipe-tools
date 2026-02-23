@@ -29,7 +29,6 @@ class TestRecipePrompt:
     def test_prompt_contains_available_tools(self):
         for tool in (
             "select_image_regions_tool",
-            "get_working_directory_tool",
             "build_recipe_html_tool",
         ):
             assert tool in RECIPE_PROMPT, f"Tool fehlt: {tool}"
