@@ -12,6 +12,10 @@ extend-ignore =
     E402,
     # F401: Module imported but unused (oft false positive bei __init__.py)
     # F401,
+    # D1xx: Fehlende Docstrings (flake8-docstrings global installiert, hier nicht erzwungen)
+    D100,D101,D102,D103,D104,D107,
+    # Q0xx: Quote-Style (flake8-quotes global installiert, black steuert Quotes)
+    Q000,Q001,Q002,Q003,
 
 # Dateien und Verzeichnisse, die ignoriert werden sollen
 exclude =
