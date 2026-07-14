@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.9.3 (2026-07-14)
+
+### Bug Fixes
+
+- Claude hatte Probleme mit der Struktur
+  ([`aa4076e`](https://github.com/lka/recipe-tools/commit/aa4076e7ea144e436f88c9f35604e9c1aad7febc))
+
+### Chores
+
+- Update uv.lock [skip ci]
+  ([`78d5aa7`](https://github.com/lka/recipe-tools/commit/78d5aa7a9e1b234533460e02dbf8e104ba18b8ab))
+
+
 ## v0.9.2 (2026-02-23)
 
 ### Chores
