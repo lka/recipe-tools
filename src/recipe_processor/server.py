@@ -6,6 +6,7 @@ import tomllib
 from pathlib import Path
 
 from fastmcp import FastMCP
+from pydantic import Field
 
 from recipe_processor.tools.html_builder import build_recipe_html
 from recipe_processor.tools.image_selector.tools import (
@@ -95,9 +96,9 @@ def build_recipe_html_tool(
     prep_time: str = "",
     cook_time: str = "",
     wait_time: str = "",
-    ingredients: list[str] | None = None,
-    instructions: list[str] | None = None,
-    cookware: list[str] | None = None,
+    ingredients: list[str] = Field(default_factory=list),
+    instructions: list[str] = Field(default_factory=list),
+    cookware: list[str] = Field(default_factory=list),
     tips: str = "",
     nutrition: str = "",
     source: str = "",
