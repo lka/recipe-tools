@@ -7,7 +7,8 @@ RECIPE_PROMPT = r"""
 ## Verfuegbare Tools
 | Tool | Zweck |
 |------|-------|
-| `select_image_regions_tool` | GUI zur Bildausschnitt-Selektion mit OCR |
+| `select_image_regions_tool` | Oeffnet GUI zur Bildausschnitt-Selektion mit OCR (kehrt sofort zurueck, blockiert NICHT) |
+| `get_selection_result_tool` | Holt das Ergebnis der Bildausschnitt-Selektion ab, sobald der Nutzer im Browser fertig ist |
 | `build_recipe_html_tool` | Erzeugt HTML, ordnet Bild zu, aktualisiert Index |
 
 ## Verzeichnisse
@@ -23,11 +24,15 @@ RECIPE_PROMPT = r"""
 ## Workflow
 
 ### 1. Bildauswahl & OCR
-1. `select_image_regions_tool` aufrufen (ohne Parameter → laedt automatisch Bilder aus Eingang/)
+1. `select_image_regions_tool` aufrufen (ohne Parameter → laedt automatisch Bilder aus Eingang/).
+   Das Tool oeffnet nur den Browser und kehrt sofort zurueck.
 2. Nutzer markiert Regionen fuer **ein** Rezept:
    - **text**: Rezeptname, Zutaten, Zubereitung, Metadaten, Tipps, Quelle
    - **foto**: Hauptbild des Rezepts
-3. Ergebnis: `full_recipe_text` (OCR aller Textregionen) + Foto-Dateien in tmp/
+3. `get_selection_result_tool` aufrufen. Meldet das Tool "noch nicht
+   abgeschlossen", warten und erneut aufrufen, bis der Nutzer im Browser
+   auf "Fertig & Exportieren" geklickt hat.
+4. Ergebnis: `full_recipe_text` (OCR aller Textregionen) + Foto-Dateien in tmp/
 
 ### 2. OCR-Text interpretieren und strukturieren
 Die OCR-Erkennungsrate ist oft niedrig. Den Text sorgfaeltig interpretieren
@@ -37,11 +42,11 @@ und folgende Felder extrahieren:
 |------|----------|
 | `recipe_name` | Erste Ueberschrift; Fallback: Nutzer fragen |
 | `subtitle` | Kurzbeschreibung unter dem Rezeptnamen |
-| `portions` | "fuer X Personen", "X Stueck", "Ergibt:" |
+| `portions` | "fuer X Personen", "X Stueck", "Ergibt:"; Wenn eine Zahl mit "Personen" da steht, dann "Personen" weglassen. |
 | `prep_time` | "Vorbereitungszeit:", "Vorbereitung:" (z.B. "15 Min") |
 | `cook_time` | "Zubereitungszeit:", "Backzeit:", "Kochzeit:" (z.B. "30 Min") |
 | `wait_time` | "Wartezeit:", "Ruhezeit:", "Kuehlzeit:" (z.B. "1 Std") |
-| `ingredients` | Liste der Zutaten (nach "Zutaten:", "Du brauchst:") |
+| `ingredients` | Liste der Zutaten (nach "Zutaten:", "Du brauchst:"); Wenn mehrere Zutaten in einer Zeile stehen, jeweils in eine eigene Zeile aufteilen |
 | `instructions` | Liste der Zubereitungsschritte (nach "Zubereitung:", "So geht's:") |
 | `cookware` | Liste der benoetigten Kuechengeraete (z.B. ["Pfanne", "Topf", "Backofen"]) – optional |
 | `tips` | "Tipp:", "Hinweis:", "Info:" |

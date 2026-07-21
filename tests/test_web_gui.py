@@ -351,6 +351,52 @@ class TestFinishAndCancelApi:
         assert gui._done_event.is_set()
 
 
+class TestPollResult:
+    """Tests fuer poll_result() im Test-Modus (create_ui=False)."""
+
+    def test_pending_before_finish(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        img_path = _make_image(tmp_path)
+        gui = WebImageSelectorGUI(img_path, create_ui=False)
+        assert gui.poll_result() == "pending"
+
+    def test_done_after_finish(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        img_path = _make_image(tmp_path)
+        gui = WebImageSelectorGUI(img_path, create_ui=False)
+        gui._save_region_api(
+            {"x1": 10.0, "y1": 10.0, "x2": 100.0, "y2": 100.0, "mode": "foto"}
+        )
+        gui._finish_api()
+        assert gui.poll_result() == "done"
+
+    def test_cancelled_after_cancel(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        img_path = _make_image(tmp_path)
+        gui = WebImageSelectorGUI(img_path, create_ui=False)
+        gui._cancel_api()
+        assert gui.poll_result() == "cancelled"
+
+    def test_repeated_calls_stay_consistent(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        img_path = _make_image(tmp_path)
+        gui = WebImageSelectorGUI(img_path, create_ui=False)
+        gui._cancel_api()
+        assert gui.poll_result() == "cancelled"
+        assert gui.poll_result() == "cancelled"
+
+
+class TestStart:
+    """Tests fuer start() im Test-Modus (create_ui=False)."""
+
+    def test_noop_without_ui(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        img_path = _make_image(tmp_path)
+        gui = WebImageSelectorGUI(img_path, create_ui=False)
+        gui.start()  # darf keinen Server starten/Browser oeffnen
+        assert gui._server is None
+
+
 class TestRun:
     """Tests fuer run() im Test-Modus (create_ui=False)."""
 

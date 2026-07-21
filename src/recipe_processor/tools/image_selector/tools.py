@@ -10,6 +10,10 @@ from recipe_processor.core.utils import create_tmp_dir_if_needed, get_working_di
 
 from .utils import transform_coords
 
+# Laufende Auswahl-Session (nicht-blockierend gestartet über
+# select_image_regions, abgeholt über get_selection_result).
+_active_selection: ImageSelectorGUI | None = None
+
 
 def _resolve_image_path(image_path: str | None) -> str | None:
     """Löst einen relativen Bildpfad auf und validiert die Existenz."""
@@ -87,31 +91,89 @@ def _build_export_response(
     return "\n".join(lines)
 
 
-def select_image_regions(image_path: str | None = None) -> str:
-    """Öffnet eine GUI zum interaktiven Auswählen von Bildausschnitten.
+def _finalize_selection(images_data: list, export_dir: str) -> str:
+    """Exportiert die ausgewählten Regionen und baut die Antwort-Nachricht.
 
-    Unterstützt Bildformate (JPEG, PNG, etc.) und PDF-Dateien.
-    Ohne image_path werden automatisch die ersten 4 Bilder aus dem
-    Bildverzeichnis geladen.
+    Args:
+        images_data: Liste der images_data-Dicts aus der GUI.
+        export_dir: Zielverzeichnis für den Export.
+
+    Returns:
+        Antwort-Nachricht als String.
     """
-    export_dir = create_tmp_dir_if_needed()
-
-    resolved = _resolve_image_path(image_path)
-    if isinstance(resolved, str) and resolved.startswith("Fehler"):
-        return resolved
-
-    gui = ImageSelectorGUI(resolved, export_dir)
-    images_data = gui.run()
-
-    if not images_data:
-        return "Auswahl abgebrochen - keine Bereiche exportiert"
-
     exported_files, total = _export_all_regions(images_data, export_dir)
 
     if total == 0:
         return "Keine Bereiche zum Exportieren ausgewählt"
 
     return _build_export_response(exported_files, len(images_data), export_dir)
+
+
+def select_image_regions(image_path: str | None = None) -> str:
+    """Öffnet eine GUI zum interaktiven Auswählen von Bildausschnitten.
+
+    Unterstützt Bildformate (JPEG, PNG, etc.) und PDF-Dateien.
+    Ohne image_path werden automatisch die ersten 4 Bilder aus dem
+    Bildverzeichnis geladen.
+
+    Der Aufruf blockiert NICHT: Die GUI öffnet sich im Standard-Browser und
+    die Funktion kehrt sofort zurück. Das Ergebnis muss anschließend über
+    get_selection_result() abgeholt werden, sobald die Auswahl im Browser
+    abgeschlossen wurde (damit ein blockierender Aufruf nicht an ein
+    Client-seitiges Tool-Timeout stößt).
+    """
+    global _active_selection
+
+    resolved = _resolve_image_path(image_path)
+    if isinstance(resolved, str) and resolved.startswith("Fehler"):
+        return resolved
+
+    export_dir = create_tmp_dir_if_needed()
+    gui = ImageSelectorGUI(resolved, export_dir)
+    gui.start()
+    _active_selection = gui
+
+    return (
+        "Ein Browserfenster wurde geöffnet, um Bildbereiche auszuwählen.\n"
+        "Bitte die gewünschten Bereiche markieren und auf "
+        "'Fertig & Exportieren' klicken (oder das Fenster schließen, "
+        "um abzubrechen).\n\n"
+        "Rufe anschließend das Tool 'get_selection_result' auf, um das "
+        "Ergebnis abzuholen. Falls die Auswahl noch nicht abgeschlossen "
+        "ist, kann es erneut aufgerufen werden."
+    )
+
+
+def get_selection_result() -> str:
+    """Holt das Ergebnis einer laufenden Bildausschnitt-Auswahl ab.
+
+    Muss nach select_image_regions() aufgerufen werden. Solange die Auswahl
+    im Browser noch nicht abgeschlossen wurde, liefert dieses Tool einen
+    Hinweis zurück und kann beliebig oft erneut aufgerufen werden.
+    """
+    global _active_selection
+
+    gui = _active_selection
+    if gui is None:
+        return (
+            "Keine laufende Auswahl gefunden. Bitte zuerst "
+            "'select_image_regions' aufrufen."
+        )
+
+    status = gui.poll_result()
+    if status == "pending":
+        return (
+            "Auswahl noch nicht abgeschlossen. Bitte im Browser fertigstellen "
+            "und dieses Tool danach erneut aufrufen."
+        )
+
+    _active_selection = None
+
+    if status == "cancelled":
+        return "Auswahl abgebrochen - keine Bereiche exportiert"
+
+    export_dir = create_tmp_dir_if_needed()
+    return _finalize_selection(gui.images_data, export_dir)
 
 
 def list_exported_regions() -> str:
@@ -133,13 +195,25 @@ def get_working_directory() -> str:
 
 
 def run_standalone(image_path: str | None = None) -> None:
-    """Starte die GUI im Standalone-Modus ohne MCP-Server."""
+    """Starte die GUI im Standalone-Modus ohne MCP-Server (blockierend)."""
     from dotenv import load_dotenv
 
     load_dotenv()
     try:
-        result = select_image_regions(image_path)
-        print(result)
+        resolved = _resolve_image_path(image_path)
+        if isinstance(resolved, str) and resolved.startswith("Fehler"):
+            print(resolved)
+            return
+
+        export_dir = create_tmp_dir_if_needed()
+        gui = ImageSelectorGUI(resolved, export_dir)
+        images_data = gui.run()
+
+        if not images_data:
+            print("Auswahl abgebrochen - keine Bereiche exportiert")
+            return
+
+        print(_finalize_selection(images_data, export_dir))
     except Exception as e:
         print(f"Fehler: {e}")
         import traceback

@@ -331,6 +331,7 @@ class WebImageSelectorGUI:
         self._server = None
         self._server_thread = None
         self._port: int | None = None
+        self._stopped = False
 
         # Aktuelle Selektion (Canvas-Koordinaten)
         self.current_selection: tuple | None = None
@@ -869,11 +870,40 @@ class WebImageSelectorGUI:
 
     def _run_web_mode(self):  # pragma: no cover
         """Startet Server, oeffnet Browser und wartet auf Benutzer-Eingabe."""
-        self._start_server()
-        webbrowser.open(f"http://127.0.0.1:{self._port}/")
+        self.start()
         self._done_event.wait()
         time.sleep(0.2)
         self._stop_server()
+        self._stopped = True
+
+    def start(self) -> None:
+        """Startet den Server und oeffnet den Browser, ohne zu blockieren.
+
+        Im Gegensatz zu run() wartet diese Methode nicht auf den Abschluss
+        der Benutzerauswahl. Der Fortschritt wird per poll_result()
+        (nicht-blockierend, z.B. aus einem separaten Tool-Aufruf) abgefragt.
+        """
+        if not self.create_ui:
+            return
+        self._start_server()  # pragma: no cover
+        webbrowser.open(f"http://127.0.0.1:{self._port}/")  # pragma: no cover
+
+    def poll_result(self) -> str:
+        """Prueft nicht-blockierend, ob die Auswahl abgeschlossen wurde.
+
+        Stoppt bei Abschluss den Server (falls dieser laeuft). Kann beliebig
+        oft aufgerufen werden, solange die Auswahl noch aussteht.
+
+        Returns:
+            "pending" solange der Benutzer noch nicht fertig ist, sonst
+            "done" (Export bestaetigt) oder "cancelled" (abgebrochen).
+        """
+        if not self._done_event.is_set():
+            return "pending"
+        if self.create_ui and not self._stopped:
+            self._stop_server()  # pragma: no cover
+            self._stopped = True  # pragma: no cover
+        return "done" if self.result_ready else "cancelled"
 
     def run(self) -> list | None:
         """Startet die Web-GUI und blockiert bis der Benutzer fertig ist.

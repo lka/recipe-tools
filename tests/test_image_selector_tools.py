@@ -5,13 +5,25 @@ import os
 import tempfile
 
 import pytest
+from PIL import Image
 
+from recipe_processor.tools.image_selector import tools
 from recipe_processor.tools.image_selector.tools import (
     _build_export_response,
     _resolve_image_path,
+    get_selection_result,
     get_working_directory,
     list_exported_regions,
+    select_image_regions,
 )
+from recipe_processor.tools.image_selector.web_gui import WebImageSelectorGUI
+
+
+def _make_image(tmp_path, name="test.png", size=(400, 300), color="red"):
+    """Hilfsfunktion: erstellt ein Testbild und gibt den Pfad zurueck."""
+    path = tmp_path / name
+    Image.new("RGB", size, color=color).save(str(path))
+    return str(path)
 
 
 class TestResolveImagePath:
@@ -105,3 +117,77 @@ class TestGetWorkingDirectory:
         monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
         result = get_working_directory()
         assert str(tmp_path) in result
+
+
+class TestSelectImageRegions:
+    """Tests für select_image_regions (nicht-blockierender Start)."""
+
+    def test_returns_error_for_missing_image(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        result = select_image_regions(str(tmp_path / "nope.png"))
+        assert result.startswith("Fehler")
+        assert tools._active_selection is None
+
+    def test_starts_selection_without_blocking(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        monkeypatch.setattr(tools, "_active_selection", None)
+        img_path = _make_image(tmp_path)
+
+        class _NoUiGUI(WebImageSelectorGUI):
+            def __init__(self, image_path=None, working_dir=None, create_ui=True):
+                super().__init__(image_path, working_dir, create_ui=False)
+
+        monkeypatch.setattr(tools, "ImageSelectorGUI", _NoUiGUI)
+
+        result = select_image_regions(img_path)
+
+        assert "get_selection_result" in result
+        assert tools._active_selection is not None
+        assert tools._active_selection.images_data[0]["original_path"] == img_path
+
+
+class TestGetSelectionResult:
+    """Tests für get_selection_result."""
+
+    def test_no_active_selection(self, monkeypatch):
+        monkeypatch.setattr(tools, "_active_selection", None)
+        result = get_selection_result()
+        assert "Keine laufende Auswahl" in result
+
+    def test_pending_selection(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        img_path = _make_image(tmp_path)
+        gui = WebImageSelectorGUI(img_path, create_ui=False)
+        monkeypatch.setattr(tools, "_active_selection", gui)
+
+        result = get_selection_result()
+
+        assert "noch nicht abgeschlossen" in result
+        assert tools._active_selection is gui
+
+    def test_cancelled_selection(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        img_path = _make_image(tmp_path)
+        gui = WebImageSelectorGUI(img_path, create_ui=False)
+        gui._cancel_api()
+        monkeypatch.setattr(tools, "_active_selection", gui)
+
+        result = get_selection_result()
+
+        assert "abgebrochen" in result
+        assert tools._active_selection is None
+
+    def test_completed_selection_exports_regions(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("IMAGE_SELECTOR_WORKING_DIR", str(tmp_path))
+        img_path = _make_image(tmp_path)
+        gui = WebImageSelectorGUI(img_path, create_ui=False)
+        gui._save_region_api(
+            {"x1": 10.0, "y1": 10.0, "x2": 200.0, "y2": 150.0, "mode": "foto"}
+        )
+        gui._finish_api()
+        monkeypatch.setattr(tools, "_active_selection", gui)
+
+        result = get_selection_result()
+
+        assert "Erfolgreich" in result
+        assert tools._active_selection is None

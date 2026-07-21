@@ -19,6 +19,7 @@ class TestMcpServerSetup:
         assert "get_server_version" in tool_names
         assert "get_recipe_prompt" in tool_names
         assert "select_image_regions_tool" in tool_names
+        assert "get_selection_result_tool" in tool_names
         assert "get_working_directory_tool" in tool_names
 
     def test_server_has_prompts(self):

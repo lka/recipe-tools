@@ -10,7 +10,8 @@ Der `FastMCP`-Server in `server.py` registriert alle Endpunkte zentral:
 
 - **Prompt** `generate_recipe` -- Rezept-Workflow fuer MCP-Clients mit Prompt-Unterstuetzung
 - **Tool** `get_recipe_prompt` -- Rezept-Workflow fuer Clients die nur Tools unterstuetzen
-- **Tool** `select_image_regions_tool` -- Web-GUI zur Bildausschnitt-Selektion mit OCR (oeffnet Browser automatisch)
+- **Tool** `select_image_regions_tool` -- Web-GUI zur Bildausschnitt-Selektion mit OCR (oeffnet Browser automatisch, kehrt sofort zurueck)
+- **Tool** `get_selection_result_tool` -- Holt das Ergebnis der Bildausschnitt-Selektion ab, sobald der Nutzer im Browser fertig ist
 - **Tool** `get_working_directory_tool` -- Zeigt das Arbeitsverzeichnis an
 - **Tool** `build_recipe_html_tool` -- Erzeugt HTML aus strukturierten Rezeptdaten und aktualisiert den Index (erzeugt `index.html` automatisch aus Template, falls nicht vorhanden)
 - **Tool** `get_server_version` -- Gibt die aktuelle Versionsnummer des Servers zurueck

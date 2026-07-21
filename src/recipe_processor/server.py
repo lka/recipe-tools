@@ -10,6 +10,7 @@ from pydantic import Field
 
 from recipe_processor.tools.html_builder import build_recipe_html
 from recipe_processor.tools.image_selector.tools import (
+    get_selection_result,
     get_working_directory,
     select_image_regions,
 )
@@ -66,9 +67,25 @@ def select_image_regions_tool(image_path: str | None = None) -> str:
     Unterstützt Bildformate (JPEG, PNG, etc.) und PDF-Dateien.
     Ohne image_path werden automatisch die ersten 4 Bilder aus dem
     Bildverzeichnis geladen.
+
+    Kehrt sofort zurück, sobald die GUI im Browser geöffnet wurde (blockiert
+    nicht bis zum Abschluss der Auswahl). Das Ergebnis muss anschließend mit
+    get_selection_result_tool abgeholt werden.
     """
     logger.info("Tool select_image_regions aufgerufen (image_path=%s)", image_path)
     return select_image_regions(image_path)
+
+
+@mcp.tool()
+def get_selection_result_tool() -> str:
+    """Holt das Ergebnis einer mit select_image_regions_tool gestarteten Auswahl ab.
+
+    Solange die Auswahl im Browser noch nicht abgeschlossen wurde, liefert
+    das Tool einen Hinweis zurück und kann beliebig oft erneut aufgerufen
+    werden.
+    """
+    logger.info("Tool get_selection_result aufgerufen")
+    return get_selection_result()
 
 
 # @mcp.tool()
